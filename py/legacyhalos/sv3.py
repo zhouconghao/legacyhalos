@@ -24,8 +24,12 @@ MAGCOLUMN = "MAG_R_DERED"
 
 RADIUS_CLUSTER_KPC = 125.0  # default cluster radius
 
-SBTHRESH = [23.0, 24.0, 25.0, 26.0]  # surface brightness thresholds
-APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]  # multiples of MAJORAXIS
+from legacyhalos.ellipse import REF_SBTHRESH, REF_APERTURES
+
+SBTHRESH = REF_SBTHRESH
+APERTURES = REF_APERTURES
+# SBTHRESH = [23.0, 24.0, 25.0, 26.0]  # surface brightness thresholds
+# APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]  # multiples of MAJORAXIS
 
 
 def get_galaxy_galaxydir(cat, datadir=None, htmldir=None, html=False):
@@ -1274,18 +1278,12 @@ def build_htmlpage_one(
     )
 
     js = legacyhalos.html.html_javadate()
-    
-    coadd_log_file = os.path.join(
-        galaxydir1, "{}-coadds.log".format(galaxy1)
-    )
 
-    ellipse_log_file = os.path.join(
-        galaxydir1, "{}-ellipse.log".format(galaxy1)
-    )
+    coadd_log_file = os.path.join(galaxydir1, "{}-coadds.log".format(galaxy1))
 
-    html_log_file = os.path.join(
-        galaxydir1, "{}-html.log".format(galaxy1)
-    )
+    ellipse_log_file = os.path.join(galaxydir1, "{}-ellipse.log".format(galaxy1))
+
+    html_log_file = os.path.join(galaxydir1, "{}-html.log".format(galaxy1))
 
     # Support routines--
 
@@ -1606,30 +1604,27 @@ def build_htmlpage_one(
 
             html.write("</table>\n")
             # html.write('<br />\n')
-        
+
     def _html_log(html):
         html.write("<h2>Log files</h2>\n")
         html.write("<h3>coadd log</h3>\n")
         # html.write("<pre>\n")
         html.write('<pre style="font-size: 0.8em;">\n')
-        with open(coadd_log_file, 'r') as log:
+        with open(coadd_log_file, "r") as log:
             html.write(log.read())
         html.write("</pre>\n")
 
-        
         html.write("<h3>Ellipse Log</h3>\n")
         html.write('<pre style="font-size: 0.8em;">\n')
-        with open(ellipse_log_file, 'r') as log:
+        with open(ellipse_log_file, "r") as log:
             html.write(log.read())
         html.write("</pre>\n")
 
         html.write("<h3>HTML Log</h3>\n")
         html.write('<pre style="font-size: 0.8em;">\n')
-        with open(ellipse_log_file, 'r') as log:
+        with open(ellipse_log_file, "r") as log:
             html.write(log.read())
         html.write("</pre>\n")
-
-
 
     # Read the catalogs and then build the page--
     nccds, tractor, sample = _read_ccds_tractor_sample(prefix="custom")
