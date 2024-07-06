@@ -1532,7 +1532,11 @@ def build_htmlpage_one(
         html.write("</tr>\n")
 
         for tt, ss in zip(tractor, sample):
-            g, r, z = _get_mags(tt, pipeline=True)
+            try:
+                g, r, z = _get_mags(tt, pipeline=True)
+            except Exception as e:
+                print("Failed to get pipeline mags for {}!".format(ss[GALAXYCOLUMN]))
+                print("The error is: ", e)
             html.write("<tr><td>{}</td>\n".format(ss[GALAXYCOLUMN]))
             html.write("<td>{}</td><td>{}</td><td>{}</td>\n".format(g, r, z))
 
