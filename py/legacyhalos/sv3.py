@@ -1118,7 +1118,7 @@ def _get_mags(
         if mag:
             res.append("{:.3f}".format(mag))
         else:
-            print("mag")
+            print(mag)
             if ff > 0:
                 mag = 22.5 - 2.5 * np.log10(ff)
                 if iv > 0:
