@@ -1112,8 +1112,10 @@ def _get_mags(
             mag = cat["{}_mag_sb26".format(band.lower())]
         elif cog:
             mag = cat["cog_mtot_{}".format(band.lower())]
+            assert mag is not None, "Magnitude is None!"
         else:
             print("Thar be rocks ahead!")
+
         if mag:
             res.append("{:.3f}".format(mag))
         else:
