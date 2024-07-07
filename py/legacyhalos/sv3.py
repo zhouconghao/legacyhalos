@@ -1112,13 +1112,13 @@ def _get_mags(
             mag = cat["{}_mag_sb26".format(band.lower())]
         elif cog:
             mag = cat["cog_mtot_{}".format(band.lower())]
+            print(mag)
         else:
             print("Thar be rocks ahead!")
 
         if mag:
             res.append("{:.3f}".format(mag))
         else:
-            print(mag)
             if ff > 0:
                 mag = 22.5 - 2.5 * np.log10(ff)
                 if iv > 0:
