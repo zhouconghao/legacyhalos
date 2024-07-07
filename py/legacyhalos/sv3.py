@@ -1098,6 +1098,7 @@ def _get_mags(
     res = []
     for band in bands:
         mag = None
+
         if kpc:
             iv = cat["FLUX{}_IVAR_{}".format(rad, band.upper())][0]
             ff = cat["FLUX{}_{}".format(rad, band.upper())][0]
@@ -1112,7 +1113,9 @@ def _get_mags(
             mag = cat["{}_mag_sb26".format(band.lower())]
         elif cog:
             mag = cat["cog_mtot_{}".format(band.lower())]
-            print(mag)
+            if mag is None:
+                print("No COG magnitude for {}-band!".format(band))
+                print(cat)
         else:
             print("Thar be rocks ahead!")
 
