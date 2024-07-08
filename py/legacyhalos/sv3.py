@@ -1119,7 +1119,7 @@ def _get_mags(
         else:
             print("Thar be rocks ahead!")
 
-        if mag:
+        if mag is not None:
             res.append("{:.3f}".format(mag))
         else:
             if ff > 0:
