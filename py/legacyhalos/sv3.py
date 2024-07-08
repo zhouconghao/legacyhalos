@@ -1122,6 +1122,9 @@ def _get_mags(
         if mag is not None:
             res.append("{:.3f}".format(mag))
         else:
+            if ff is None:
+                print("Flux is not assgined for {}-band!".format(band))
+                print("Magnitude is {}".format(mag))
             if ff > 0:
                 mag = 22.5 - 2.5 * np.log10(ff)
                 if iv > 0:
