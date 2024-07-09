@@ -10,6 +10,7 @@ import numpy as np
 import astropy
 import fitsio
 import traceback
+import shutil
 
 import legacyhalos.io
 
@@ -1288,10 +1289,18 @@ def build_htmlpage_one(
     js = legacyhalos.html.html_javadate()
 
     coadd_log_file = os.path.join(galaxydir1, "{}-coadds.log".format(galaxy1))
-
     ellipse_log_file = os.path.join(galaxydir1, "{}-ellipse.log".format(galaxy1))
-
     html_log_file = os.path.join(galaxydir1, "{}-html.log".format(galaxy1))
+
+    shutil.copy2(
+        coadd_log_file, os.path.join(htmlgalaxydir1, "{}-coadds.log".format(galaxy1))
+    )
+    shutil.copy2(
+        ellipse_log_file, os.path.join(htmlgalaxydir1, "{}-ellipse.log".format(galaxy1))
+    )
+    shutil.copy2(
+        html_log_file, os.path.join(htmlgalaxydir1, "{}-html.log".format(galaxy1))
+    )
 
     # Support routines--
 
@@ -1314,6 +1323,7 @@ def build_htmlpage_one(
         tractorfile = os.path.join(
             galaxydir1, "{}-{}-tractor.fits".format(galaxy1, prefix)
         )
+
         if os.path.isfile(tractorfile):
             cols = [
                 "ref_cat",
@@ -1619,24 +1629,27 @@ def build_htmlpage_one(
 
     def _html_log(html):
         html.write("<h2>Log files</h2>\n")
-        html.write("<h3>coadd log</h3>\n")
-        # html.write("<pre>\n")
-        html.write('<pre style="font-size: 0.8em;">\n')
-        with open(coadd_log_file, "r") as log:
-            html.write(log.read())
-        html.write("</pre>\n")
+        html.write('<a href="./{}-coadds.log">coadd log</a>\n'.format(galaxy1))
+        html.write('<a href="./{}-ellipse.log">ellipse log</a>\n'.format(galaxy1))
+        html.write('<a href="./{}-html.log">HTML log</a>\n'.format(galaxy1))
+        # html.write("<h3>coadd log</h3>\n")
+        # # html.write("<pre>\n")
+        # html.write('<pre style="font-size: 0.8em;">\n')
+        # with open(coadd_log_file, "r") as log:
+        #     html.write(log.read())
+        # html.write("</pre>\n")
 
-        html.write("<h3>Ellipse Log</h3>\n")
-        html.write('<pre style="font-size: 0.8em;">\n')
-        with open(ellipse_log_file, "r") as log:
-            html.write(log.read())
-        html.write("</pre>\n")
+        # html.write("<h3>Ellipse Log</h3>\n")
+        # html.write('<pre style="font-size: 0.8em;">\n')
+        # with open(ellipse_log_file, "r") as log:
+        #     html.write(log.read())
+        # html.write("</pre>\n")
 
-        html.write("<h3>HTML Log</h3>\n")
-        html.write('<pre style="font-size: 0.8em;">\n')
-        with open(ellipse_log_file, "r") as log:
-            html.write(log.read())
-        html.write("</pre>\n")
+        # html.write("<h3>HTML Log</h3>\n")
+        # html.write('<pre style="font-size: 0.8em;">\n')
+        # with open(ellipse_log_file, "r") as log:
+        #     html.write(log.read())
+        # html.write("</pre>\n")
 
     # Read the catalogs and then build the page--
     nccds, tractor, sample = _read_ccds_tractor_sample(prefix="custom")
