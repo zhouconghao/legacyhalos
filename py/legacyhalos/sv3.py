@@ -1629,9 +1629,13 @@ def build_htmlpage_one(
 
     def _html_log(html):
         html.write("<h2>Log files</h2>\n")
+        html.write("<br />\n")
         html.write('<a href="./{}-coadds.log">coadd log</a>\n'.format(galaxy1))
+        html.write("<br />\n")
         html.write('<a href="./{}-ellipse.log">ellipse log</a>\n'.format(galaxy1))
+        html.write("<br />\n")
         html.write('<a href="./{}-html.log">HTML log</a>\n'.format(galaxy1))
+        html.write("<br />\n")
         # html.write("<h3>coadd log</h3>\n")
         # # html.write("<pre>\n")
         # html.write('<pre style="font-size: 0.8em;">\n')
@@ -1670,14 +1674,12 @@ def build_htmlpage_one(
         html.write('<a href="../../{}">Home</a>\n'.format(htmlhome))
         html.write("<br />\n")
         html.write(
-            '<a href="../../{}">Next ({})</a>\n'.format(
-                nexthtmlgalaxydir1, nextgalaxy[ii]
-            )
+            '<a href="./{}.pdf">Next ({})</a>\n'.format(nextgalaxy[ii], nextgalaxy[ii])
         )
         html.write("<br />\n")
         html.write(
-            '<a href="../../{}">Previous ({})</a>\n'.format(
-                prevhtmlgalaxydir1, prevgalaxy[ii]
+            '<a href="./{}.pdf">Previous ({})</a>\n'.format(
+                prevgalaxy[ii], prevgalaxy[ii]
             )
         )
 
