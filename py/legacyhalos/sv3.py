@@ -1773,16 +1773,18 @@ def make_html(
     htmlhome = mpiargs.fname.replace(".fits", ".html")
 
     # Build the home (index.html) page (always, irrespective of clobber)--
-    build_htmlhome(
-        sample,
-        htmldir,
-        htmlhome=htmlhome,
-        pixscale=pixscale,
-        racolumn=racolumn,
-        deccolumn=deccolumn,
-        diamcolumn=diamcolumn,
-        fix_permissions=fix_permissions,
-    )
+    if True:
+        print("Not building home page")
+        # build_htmlhome(
+        #     sample,
+        #     htmldir,
+        #     htmlhome=htmlhome,
+        #     pixscale=pixscale,
+        #     racolumn=racolumn,
+        #     deccolumn=deccolumn,
+        #     diamcolumn=diamcolumn,
+        #     fix_permissions=fix_permissions,
+        # )
 
     print("Building individual pages.")
 
