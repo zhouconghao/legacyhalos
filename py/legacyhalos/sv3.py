@@ -1228,6 +1228,8 @@ def build_htmlhome(
         html.write("<br /><br />\n")
         html.write("<b><i>Last updated {}</b></i>\n".format(js))
         html.write("</html></body>\n")
+        
+        print("Done building {}".format(htmlhomefile))
 
     # if fix_permissions:
 
@@ -1781,6 +1783,8 @@ def make_html(
         diamcolumn=diamcolumn,
         fix_permissions=fix_permissions,
     )
+
+    print("Building individual pages.")
 
     # Now build the individual pages in parallel.
     galaxy, galaxydir, htmlgalaxydir = get_galaxy_galaxydir(sample, html=True)
