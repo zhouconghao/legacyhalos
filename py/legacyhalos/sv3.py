@@ -1262,6 +1262,9 @@ def build_htmlpage_one(
     fix_permissions,
 ):
     """Build the web page for a single galaxy."""
+
+    print(f"Working on galaxy {galaxy1}.")
+    
     import fitsio
     from glob import glob
     import legacyhalos.io
@@ -1710,8 +1713,10 @@ def build_htmlpage_one(
         html.write("<br />\n")
         html.write("</html></body>\n")
 
+    print("Done building {}".format(htmlfile))
+
     if fix_permissions:
-        # print('Fixing permissions.')
+        print('Fixing permissions.')
         shutil.chown(htmlfile, group="cosmo")
 
 
