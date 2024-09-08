@@ -340,7 +340,7 @@ def qa_curveofgrowth(ellipsefit, pipeline_ellipsefit=None, png=None,
         ax.fill_between(radius, cog-cogerr, cog+cogerr, label=label,
                         color=col, alpha=0.9)
                         #facecolor=col, edgecolor='k', lw=2)
-        ax.plot(radius, cog, color=col, marker='o', linestyle="")
+        ax.plot(radius, cog, color=col, marker='o', linestyle="", alpha=0.5, s=5)
         #if np.any(np.iscomplex(sma)) or np.any(np.iscomplex(cog)) or np.any(np.iscomplex(cogerr)):
         #    pdb.set_trace()
 
