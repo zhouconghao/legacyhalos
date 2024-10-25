@@ -28,7 +28,9 @@ RADIUS_CLUSTER_KPC = 125.0  # default cluster radius
 from legacyhalos.ellipse import REF_SBTHRESH, REF_APERTURES
 
 SBTHRESH = REF_SBTHRESH
-APERTURES = REF_APERTURES
+# APERTURES = REF_APERTURES
+APERTURES = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+ABS_APERTURES = True
 # SBTHRESH = [23.0, 24.0, 25.0, 26.0]  # surface brightness thresholds
 # APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]  # multiples of MAJORAXIS
 
@@ -1070,6 +1072,7 @@ def call_ellipse(
                 refband=refband,
                 sbthresh=SBTHRESH,
                 apertures=APERTURES,
+                abs_apertures=ABS_APERTURES,
                 delta_logsma=delta_logsma,
                 maxsma=maxsma,
                 input_ellipse=input_ellipse,

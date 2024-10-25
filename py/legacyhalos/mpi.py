@@ -76,6 +76,7 @@ def call_ellipse(
     input_ellipse=None,
     sbthresh=None,
     apertures=None,
+    abs_apertures=False,
     clobber=False,
 ):
     """Wrapper script to do ellipse-fitting."""
@@ -125,6 +126,7 @@ def call_ellipse(
                 nproc=nproc,
                 sbthresh=sbthresh,
                 apertures=apertures,
+                abs_apertures=False,
                 input_ellipse=input_ellipse,
                 delta_logsma=delta_logsma,
                 maxsma=maxsma,

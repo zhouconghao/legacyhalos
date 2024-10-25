@@ -109,6 +109,7 @@ def apphot_one(img, mask, theta, x0, y0, aa, bb, pixscale, variance=False, iscir
 
 def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
                 seed=1, sbthresh=REF_SBTHRESH, apertures=REF_APERTURES,
+                abs_apertures=False,
                 nmonte=30):
     """Measure the curve of growth (CoG) by performing elliptical aperture
     photometry.
@@ -196,10 +197,15 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
 
     # aperture radii
     for iap, ap in enumerate(apertures):
-        if refellipsefit['sma_moment'] > 0:
-            results['sma_ap{:02d}'.format(iap+1)] = np.float32(refellipsefit['sma_moment'] * ap) # [arcsec]
+        # use absolute apertures if option is set
+        if abs_apertures:
+            if refellipsefit['sma_moment'] > 0:
+                results['sma_ap{:02d}'.format(iap+1)] = np.float32(ap)
         else:
-            results['sma_ap{:02d}'.format(iap+1)] = np.float32(0.0)
+            if refellipsefit['sma_moment'] > 0:
+                results['sma_ap{:02d}'.format(iap+1)] = np.float32(refellipsefit['sma_moment'] * ap) # [arcsec]
+            else:
+                results['sma_ap{:02d}'.format(iap+1)] = np.float32(0.0)
 
     chi2fail = 1e8
     nparams = 4
@@ -781,6 +787,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                          integrmode='median', nclip=3, sclip=3,
                          maxsma=None, logsma=True, delta_logsma=5.0, delta_sma=1.0,
                          sbthresh=REF_SBTHRESH, apertures=REF_APERTURES,
+                         abs_apertures=False,
                          copy_mw_transmission=False, 
                          galaxyinfo=None, input_ellipse=None,
                          fitgeometry=False, nowrite=False, verbose=False):
@@ -1019,7 +1026,8 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
     print('Performing elliptical aperture photometry.')
     t0 = time.time()
     cog = ellipse_cog(bands, data, ellipsefit, igal=igal,
-                      pool=pool, sbthresh=sbthresh, apertures=apertures)
+                      pool=pool, sbthresh=sbthresh, apertures=apertures,
+                      abs_apertures=abs_apertures)
     ellipsefit.update(cog)
     del cog
     print('Time = {:.3f} min'.format( (time.time() - t0) / 60))
@@ -1040,6 +1048,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                                         refband=refband,
                                         sbthresh=sbthresh,
                                         apertures=apertures,
+                                        abs_apertures=abs_apertures,
                                         bands=ellipsefit['bands'],
                                         verbose=True,
                                         copy_mw_transmission=copy_mw_transmission,
@@ -1052,6 +1061,7 @@ def legacyhalos_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                         bands=['g', 'r', 'z'], integrmode='median',
                         nclip=3, sclip=3, sbthresh=REF_SBTHRESH,
                         apertures=REF_APERTURES,
+                        abs_apertures=False,
                         delta_sma=1.0, delta_logsma=5, maxsma=None, logsma=True,
                         copy_mw_transmission=False, 
                         input_ellipse=None, fitgeometry=False,
@@ -1093,6 +1103,7 @@ def legacyhalos_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                                                   delta_sma=delta_sma, logsma=logsma,
                                                   refband=refband, nproc=nproc, sbthresh=sbthresh,
                                                   apertures=apertures,
+                                                  abs_apertures=abs_apertures,
                                                   integrmode=integrmode, nclip=nclip, sclip=sclip,
                                                   input_ellipse=input_ellipse,
                                                   copy_mw_transmission=copy_mw_transmission,
