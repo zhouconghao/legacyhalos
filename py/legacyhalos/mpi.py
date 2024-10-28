@@ -126,7 +126,7 @@ def call_ellipse(
                 nproc=nproc,
                 sbthresh=sbthresh,
                 apertures=apertures,
-                abs_apertures=False,
+                abs_apertures=abs_apertures,
                 input_ellipse=input_ellipse,
                 delta_logsma=delta_logsma,
                 maxsma=maxsma,
