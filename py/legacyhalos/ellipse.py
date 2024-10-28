@@ -194,10 +194,11 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
         else:
             results['sma_sb{:0g}'.format(sbcut)] = np.float32(0.0)
             results['sma_ivar_sb{:0g}'.format(sbcut)] = np.float32(0.0)
-
     if abs_apertures:
         print("Using absolute apertures!")
-        print(f"apertures = {apertures}")
+    else:
+        print("Using relative apertures!")
+    print(f"apertures = {apertures}")
     # aperture radii
     for iap, ap in enumerate(apertures):
         # use absolute apertures if option is set
