@@ -19,7 +19,7 @@ from photutils.isophote.fitter import CentralEllipseFitter
 
 import legacyhalos.io
 
-REF_SBTHRESH = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26] # surface brightness thresholds
+REF_SBTHRESH = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26, 27, 28, 29] # surface brightness thresholds
 REF_APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0] # multiples of MAJORAXIS
 
 # ndim>1 columns when ellipse-fitting fails; note, this list is used by various
@@ -145,6 +145,7 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
 
     #print('Should we measure these radii from the extinction-corrected photometry?')
     for sbcut in sbthresh:
+        print("Measuring the radius at {:.1f} mag/arcsec2.".format(sbcut))
         if sbprofile['mu_{}'.format(refband)].max() < sbcut or sbprofile['mu_{}'.format(refband)].min() > sbcut:
             print('Insufficient profile to measure the radius at {:.1f} mag/arcsec2!'.format(sbcut))
             results['sma_sb{:0g}'.format(sbcut)] = np.float32(0.0)
@@ -194,11 +195,13 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
         else:
             results['sma_sb{:0g}'.format(sbcut)] = np.float32(0.0)
             results['sma_ivar_sb{:0g}'.format(sbcut)] = np.float32(0.0)
+            
     if abs_apertures:
         print("Using absolute apertures!")
     else:
         print("Using relative apertures!")
     print(f"apertures = {apertures}")
+
     # aperture radii
     for iap, ap in enumerate(apertures):
         # use absolute apertures if option is set
@@ -531,12 +534,14 @@ def _unpack_isofit(ellipsefit, filt, isofit, failed=False):
         return fail
     
     if failed:
+        print("ellipsefit failed!")
         ellipsefit.update(_fill_failed())
     else:
         I = np.isfinite(isofit.intens) * np.isfinite(isofit.int_err)
         if np.sum(I) == 0:
             ellipsefit.update(_fill_failed())
         else:
+            print(f"number of good isophotes = {np.sum(I)}")
             values = [isofit.sma[I], isofit.intens[I], isofit.int_err[I], isofit.eps[I], isofit.ellip_err[I],
                       isofit.pa[I], isofit.pa_err[I], isofit.x0[I], isofit.x0_err[I], isofit.y0[I], isofit.y0_err[I],
                       isofit.a3[I], isofit.a3_err[I], isofit.a4[I], isofit.a4_err[I], isofit.rms[I], isofit.pix_stddev[I],
@@ -650,6 +655,7 @@ def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=False,
                 keep = np.isfinite(sb) * ((sb / sberr) > snrmin)
                 
             if cut_on_cog:
+                print("Cutting on the curve of growth.")
                 keep *= (ellipsefit['sma_{}'.format(filt.lower())] * pixscale) <= np.max(ellipsefit['cog_sma_{}'.format(filt.lower())])
             keep = np.where(keep)[0]
                 
@@ -916,6 +922,9 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
     # Integrate to the edge [pixels].
     if maxsma is None:
         maxsma = 0.95 * (data['refband_width']/2) / np.cos(geometry.pa % (np.pi/4))
+        print(f"redband_width = {data["refband_width"]}")
+        print(f"maxsma = {maxsma} pixels")
+        print(f"maxsma = {maxsma * data["refpixscale"]} arcsec")
     ellipsefit['maxsma'] = np.float32(maxsma) # [pixels]
 
     if logsma:
@@ -985,6 +994,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
         #filtsma = np.round(sma[::int(1/(pixscalefactor))] * pixscalefactor).astype('f4')
         filtsma = np.unique(filtsma)
         assert(len(np.unique(filtsma)) == len(filtsma))
+        print(f"sma in {filt} = {filtsma}")
     
         # Loop on the reference band isophotes.
         t0 = time.time()

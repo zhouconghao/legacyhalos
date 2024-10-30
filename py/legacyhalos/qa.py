@@ -2293,6 +2293,7 @@ def _display_ellipse_sbprofile(ellipsefit, skyellipsefit={}, minerr=0.0,
             col = next(colors)
             ax3.fill_between(sma, mu-muerr, mu+muerr, label=r'${}$'.format(filt.lower()), color=col,
                              alpha=0.75, edgecolor='k', lw=2)
+            ax3.scatter(sma, mu, color=col, s=10, edgecolor='k', lw=2, alpha=0.75)
 
             if np.nanmin(mu-muerr) < yminmax[0]:
                 yminmax[0] = np.nanmin(mu-muerr)
