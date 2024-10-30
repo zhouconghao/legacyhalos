@@ -922,7 +922,8 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
     # Integrate to the edge [pixels].
     if maxsma is None:
         maxsma = 0.95 * (data['refband_width']/2) / np.cos(geometry.pa % (np.pi/4))
-        print(f"redband_width = {data["refband_width"]}")
+        refband_width = data["refband_width"]
+        print(f"refband_width = {refband_width}")
         print(f"maxsma = {maxsma} pixels")
         print(f"maxsma = {maxsma * data["refpixscale"]} arcsec")
     ellipsefit['maxsma'] = np.float32(maxsma) # [pixels]
