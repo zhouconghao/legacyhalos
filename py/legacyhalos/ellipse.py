@@ -925,7 +925,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
         refband_width = data["refband_width"]
         print(f"refband_width = {refband_width}")
         print(f"maxsma = {maxsma} pixels")
-        print(f"maxsma = {maxsma * data["refpixscale"]} arcsec")
+        print(f"maxsma = {maxsma * data['refpixscale']} arcsec")
     ellipsefit['maxsma'] = np.float32(maxsma) # [pixels]
 
     if logsma:
