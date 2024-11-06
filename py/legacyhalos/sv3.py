@@ -23,7 +23,7 @@ REFIDCOLUMN = "TARGETID"
 MAGCOLUMN = "MAG_R_DERED"
 # MAGCOLUMN = "mag_r_dered"
 
-RADIUS_CLUSTER_KPC = 250.  # default cluster radius
+RADIUS_CLUSTER_KPC = 300.  # default cluster radius
 
 from legacyhalos.ellipse import REF_SBTHRESH, REF_APERTURES
 
