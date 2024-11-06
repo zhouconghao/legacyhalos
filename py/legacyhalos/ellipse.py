@@ -658,6 +658,8 @@ def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=False,
                 print("Cutting on the curve of growth.")
                 keep *= (ellipsefit['sma_{}'.format(filt.lower())] * pixscale) <= np.max(ellipsefit['cog_sma_{}'.format(filt.lower())])
             keep = np.where(keep)[0]
+
+            print(f"keep {np.sum(keep)} sb out of {len(sb)}")
                 
             sbprofile['keep_{}'.format(filt.lower())] = keep
 
