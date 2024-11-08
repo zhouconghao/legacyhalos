@@ -135,6 +135,8 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
     refband = refellipsefit['refband']
     refpixscale = data['refpixscale']
 
+    print(f"Using {refband} as the reference band.")
+
     #maxsma = refellipsefit['maxsma']
 
     results = {}
@@ -643,8 +645,10 @@ def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=False,
         sberr = np.atleast_1d(np.sqrt(ellipsefit['intens_err_{}'.format(filt.lower())]**2 + (0.4 * np.log(10) * sb * minerr)**2))
             
         if sma_not_radius:
+            print("Using semi-major axis as the radius.")
             radius = sma * pixscale # [arcsec]
         else:
+            print("Using circularized radius.")
             radius = sma * np.sqrt(1 - eps) * pixscale # circularized radius [arcsec]
 
         with warnings.catch_warnings():
