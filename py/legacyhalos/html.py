@@ -524,6 +524,12 @@ def make_ellipse_qa(galaxy, galaxydir, htmlgalaxydir, bands=['g', 'r', 'z'],
                 display_ellipse_sbprofile(ellipsefit, plot_radius=False, plot_sbradii=False,
                                           png=sbprofilefile, verbose=verbose, minerr=0.0,
                                           cosmo=cosmo, linear=linear, plot_colors=plot_colors)
+
+            linear_sbprofilefile = os.path.join(htmlgalaxydir, '{}-{}-ellipse-{}sbprofile.png'.format(galaxy, data['filesuffix'], galid))
+            if not os.path.isfile(sbprofilefile) or clobber:
+                display_ellipse_sbprofile(ellipsefit, plot_radius=False, plot_sbradii=False,
+                                          png=linear_sbprofilefile, verbose=verbose, minerr=0.0,
+                                          cosmo=cosmo, linear=True, plot_colors=plot_colors)
                 
             cogfile = os.path.join(htmlgalaxydir, '{}-{}-ellipse-{}cog.png'.format(galaxy, data['filesuffix'], galid))
             if not os.path.isfile(cogfile) or clobber:
