@@ -600,7 +600,7 @@ def integrate_isophot_one(img, sma, theta, eps, x0, y0,
 
     return out
 
-def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=False,
+def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=True,
                       cut_on_cog=False, sdss=False, linear=False):
     """Convert ellipse-fitting results to a magnitude, color, and surface brightness
     profiles.
