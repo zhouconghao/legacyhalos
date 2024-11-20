@@ -643,6 +643,8 @@ def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=True,
         sma = np.atleast_1d(ellipsefit['sma_{}'.format(filt.lower())])   # semi-major axis [pixels]
         sb = np.atleast_1d(ellipsefit['intens_{}'.format(filt.lower())]) # [nanomaggies/arcsec2]
         sberr = np.atleast_1d(np.sqrt(ellipsefit['intens_err_{}'.format(filt.lower())]**2 + (0.4 * np.log(10) * sb * minerr)**2))
+
+        #hack: in our project we always want to use the semi-major axis as the radius
             
         if sma_not_radius:
             print("Using semi-major axis as the radius.")
