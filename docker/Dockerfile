@@ -1,4 +1,4 @@
-FROM legacysurvey/legacypipe:DR9.9.6
+FROM legacysurvey/legacypipe:DR10.2c
 
 RUN for x in \
     ipython \
@@ -9,6 +9,7 @@ RUN for x in \
     gnureadline \
     corner \
     scikit-image \
+    seaborn \
     ; do pip --no-cache-dir install $x; done
 
 # Remove the policy.xml file so we do not get an 'exhausted cache resources'
@@ -21,11 +22,12 @@ ENV IPYTHONDIR /tmp/ipython-config
 WORKDIR /src
 RUN git clone https://github.com/moustakas/legacyhalos.git legacyhalos \
     && cd legacyhalos && git describe
+RUN git config --global --add safe.directory /src/legacyhalos
 
 ENV PYTHONPATH=/src/legacyhalos/py:$PYTHONPATH
 ENV PATH=/src/legacyhalos/bin:$PATH
 
 # update legacyhalos
-RUN cd /src/legacyhalos && git pull && git describe && echo 2
+RUN cd /src/legacyhalos && git pull && git describe && echo 11
 
 LABEL Maintainer="John Moustakas jmoustakas@siena.edu"
