@@ -1,4 +1,7 @@
-FROM legacysurvey/legacypipe:DR9.7.0
+FROM legacysurvey/legacypipe:DR10.2c
+# FROM legacysurvey/legacypipe:DR9.9.9
+
+RUN ldd --version
 
 RUN for x in \
     ipython \
@@ -6,8 +9,10 @@ RUN for x in \
     pyyaml \
     h5py \
     colossus \
+    gnureadline \
     corner \
     scikit-image \
+    seaborn \
     ; do pip --no-cache-dir install $x; done
 
 # Remove the policy.xml file so we do not get an 'exhausted cache resources'
@@ -18,13 +23,15 @@ ENV IPYTHONDIR /tmp/ipython-config
 
 # legacyhalos
 WORKDIR /src
-RUN git clone https://github.com/moustakas/legacyhalos.git legacyhalos \
-    && cd legacyhalos && git describe
+RUN git clone --branch 2021_jun_11 https://github.com/zhouconghao/legacyhalos.git legacyhalos \
+    && cd legacyhalos \
+    && git describe --always
+RUN git config --global --add safe.directory /src/legacyhalos
 
 ENV PYTHONPATH=/src/legacyhalos/py:$PYTHONPATH
 ENV PATH=/src/legacyhalos/bin:$PATH
 
 # update legacyhalos
-RUN cd /src/legacyhalos && git pull && git describe && echo 2
+RUN cd /src/legacyhalos && git pull && git describe --always && echo 11
 
 LABEL Maintainer="John Moustakas jmoustakas@siena.edu"

@@ -651,8 +651,9 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
                     print('File {} not found.'.format(imfile))
                 missing_data = True
                 break
-    
+    data["missing_data"] = False
     if missing_data:
+        data["missing_data"] = True
         return data, None
 
     # Pack some preliminary info into the output dictionary.
