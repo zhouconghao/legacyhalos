@@ -18,6 +18,19 @@ RACOLUMN = 'RA'
 DECCOLUMN = 'DEC'
 DIAMCOLUMN = 'RADIUS_MOSAIC' # [radius, arcsec]
 GALAXYCOLUMN = 'ID_S16A'
+REFIDCOLUMN = 'ID_S16A'
+
+# ZCOLUMN = 'Z_BEST'
+# RACOLUMN = 'RA'
+# DECCOLUMN = 'DEC'
+# DIAMCOLUMN = 'RADIUS_MOSAIC' # [radius, arcsec]
+# GALAXYCOLUMN = 'ID_S16A'
+
+# RADIUS_CLUSTER_KPC = 250.0 # default cluster radius
+# RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
+
+SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
+APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0] # multiples of MAJORAXIS
 
 RADIUS_CLUSTER_KPC = 250.0 # default cluster radius
 RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
