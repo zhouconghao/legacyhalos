@@ -675,6 +675,7 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
     data['refband'] = refband
     data['refpixscale'] = np.float32(pixscale)
     data['failed'] = False # be optimistic!
+    data["missingdata"] = False
 
     # We ~have~ to read the tractor catalog using fits_table because we will
     # turn these catalog entries into Tractor sources later.
