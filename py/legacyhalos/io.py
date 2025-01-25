@@ -569,7 +569,7 @@ def _read_image_data(data, filt2imfile, starmask=None, fill_value=0.0,
 
         # Dilate the mask, mask out a 10% border, and pack into a dictionary.
         mask = binary_dilation(mask, iterations=2)
-        edge = np.int(0.02*sz[0])
+        edge = np.int32(0.02*sz[0])
         mask[:edge, :] = True
         mask[:, :edge] = True
         mask[:, sz[0]-edge:] = True
