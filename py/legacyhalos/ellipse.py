@@ -21,6 +21,10 @@ import legacyhalos.io
 
 REF_SBTHRESH = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26] # surface brightness thresholds
 
+def _get_r0():
+    r0 = 10.0 # [arcsec]
+    return r0
+
 def cog_model(radius, mtot, m0, alpha1, alpha2):
     r0 = _get_r0()
     #return mtot - m0 * np.expm1(-alpha1*((radius / r0)**(-alpha2)))
