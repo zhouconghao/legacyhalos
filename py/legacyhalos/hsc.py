@@ -18,6 +18,7 @@ RACOLUMN = 'RA'
 DECCOLUMN = 'DEC'
 DIAMCOLUMN = 'RADIUS_MOSAIC' # [radius, arcsec]
 GALAXYCOLUMN = 'ID_S16A'
+REFIDCOLUMN = 'ID_S16A'
 
 RADIUS_CLUSTER_KPC = 250.0 # default cluster radius
 RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
