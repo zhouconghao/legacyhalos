@@ -41,7 +41,7 @@ ell = Ellipse(img, geometry=geo)
 # majoraxis and take the mean value.
 nsma = 10
 smamin, smamax = 0.05*props2.majoraxis, props2.majoraxis # /3
-step = np.int((smamax - smamin) / nsma)
+step = np.int32((smamax - smamin) / nsma)
 smagrid = np.linspace(smamin, smamax, nsma).astype(int)
 sma0 = (smamax-smamin)/2
 #sma0 = smamin * 5

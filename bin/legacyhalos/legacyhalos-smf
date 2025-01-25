@@ -179,9 +179,9 @@ def compute_nofz(cat=None, area=None, nboot=100, seed=None, suffix=None,
     hx = fits.HDUList()
     hdu = fits.ImageHDU(nofz.astype('f4'), name='NOFZ')
     hdu.header['NZ'] = nz
-    hdu.header['ZMIN'] = np.float('{:.4f}'.format(_zmin))
-    hdu.header['ZMAX'] = np.float('{:.4f}'.format(_zmax))
-    hdu.header['DZ'] = np.float(dz)
+    hdu.header['ZMIN'] = np.float32('{:.4f}'.format(_zmin))
+    hdu.header['ZMAX'] = np.float32('{:.4f}'.format(_zmax))
+    hdu.header['DZ'] = np.float32(dz)
     hdu.header['NLAM'] = nlam
     for jj in range(nlam):
         hdu.header['LAMMIN{:02d}'.format(jj)] = lmin[jj].astype('f4')

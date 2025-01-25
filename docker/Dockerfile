@@ -1,4 +1,7 @@
 FROM legacysurvey/legacypipe:DR10.2c
+# FROM legacysurvey/legacypipe:DR9.9.9
+
+RUN ldd --version
 
 RUN for x in \
     ipython \
