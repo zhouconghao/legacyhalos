@@ -666,6 +666,7 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
                 break
     
     if missing_data:
+        data['missingdata'] = True
         return data, None
 
     # Pack some preliminary info into the output dictionary.
