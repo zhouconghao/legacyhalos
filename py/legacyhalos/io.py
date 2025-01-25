@@ -439,8 +439,8 @@ def _get_psfsize_and_depth(tractor, bands, pixscale, incenter=False):
     W = np.max(tractor.by) - np.min(tractor.by)
     if incenter:
         dH = 0.1 * H
-        these = np.where((tractor.bx >= np.int(H / 2 - dH)) * (tractor.bx <= np.int(H / 2 + dH)) *
-                         (tractor.by >= np.int(H / 2 - dH)) * (tractor.by <= np.int(H / 2 + dH)))[0]
+        these = np.where((tractor.bx >= np.int32(H / 2 - dH)) * (tractor.bx <= np.int32(H / 2 + dH)) *
+                         (tractor.by >= np.int32(H / 2 - dH)) * (tractor.by <= np.int32(H / 2 + dH)))[0]
     else:
         #these = np.where(tractor.get(psfdepthcol) > 0)[0]
         these = np.arange(len(tractor))
