@@ -1995,7 +1995,7 @@ def display_ccd_apphot():
     sbinsz = 0.001
     srange = (-5 * sig1, +5 * sig1)
     #sbins = 50
-    sbins = np.int( (srange[1]-srange[0]) / sbinsz )
+    sbins = np.int32( (srange[1]-srange[0]) / sbinsz )
 
     qaccd = os.path.join('.', 'qa-{}-ccd{:02d}-sky.png'.format(prefix.lower(), iccd))
     fig, ax = plt.subplots(1, 2, figsize=(8, 4))
