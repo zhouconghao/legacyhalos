@@ -23,7 +23,7 @@ ENV IPYTHONDIR /tmp/ipython-config
 
 # legacyhalos
 WORKDIR /src
-RUN git clone --branch 2021_jun_11 https://github.com/zhouconghao/legacyhalos.git legacyhalos \
+RUN git clone --branch 2021_aug_3 https://github.com/zhouconghao/legacyhalos.git legacyhalos \
     && cd legacyhalos \
     && git describe --always
 RUN git config --global --add safe.directory /src/legacyhalos
