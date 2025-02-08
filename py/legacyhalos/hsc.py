@@ -205,7 +205,7 @@ def mpi_args():
 
     parser.add_argument('--first', type=int, help='Index of first object to process.')
     parser.add_argument('--last', type=int, help='Index of last object to process.')
-    parser.add_argument('--galaxylist', type=np.int, nargs='*', default=None, help='List of galaxy names to process.')
+    parser.add_argument('--galaxylist', type=np.int32, nargs='*', default=None, help='List of galaxy names to process.')
 
     parser.add_argument('--coadds', action='store_true', help='Build the custom coadds.')
     parser.add_argument('--pipeline-coadds', action='store_true', help='Build the pipelinecoadds.')
