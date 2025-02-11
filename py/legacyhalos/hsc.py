@@ -378,7 +378,7 @@ def read_sample(first=None, last=None, galaxylist=None, verbose=False):
 
 def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
                           threshmask=0.001, r50mask=0.1, maxshift=5,
-                          sigmamask=3.0, neighborfactor=3.0, verbose=False):
+                          sigmamask=10., neighborfactor=5., verbose=False):
     """Wrapper to mask out all sources except the galaxy we want to ellipse-fit.
 
     r50mask - mask satellites whose r50 radius (arcsec) is > r50mask 
