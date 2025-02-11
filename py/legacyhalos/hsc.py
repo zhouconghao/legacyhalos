@@ -850,6 +850,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                                        pixscale=pixscale, nproc=nproc, 
                                        bands=bands, refband=refband, sbthresh=SBTHRESH,
                                        delta_logsma=delta_logsma, maxsma=maxsma,
+                                       apertures=APERTURES,
                                        write_donefile=False,
                                        input_ellipse=input_ellipse,
                                        verbose=verbose, debug=True)#, logfile=logfile)# no logfile and debug=True, otherwise this will crash
