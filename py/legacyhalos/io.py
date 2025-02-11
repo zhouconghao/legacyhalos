@@ -277,7 +277,8 @@ def get_ellipsefit_filename(galaxy, galaxydir, filesuffix='', galaxy_id=''):
     else:
         fsuff = '-{}'.format(filesuffix)
         
-    ellipsefitfile = os.path.join(galaxydir, '{}{}-ellipse{}.fits'.format(galaxy, fsuff, galid))
+    # ellipsefitfile = os.path.join(galaxydir, '{}{}-ellipse{}.fits'.format(galaxy, fsuff, galid))
+    ellipsefitfile = os.path.join(galaxydir, '{}{}{}-ellipse.fits'.format(galaxy, fsuff, galid))
 
     return ellipsefitfile
 
