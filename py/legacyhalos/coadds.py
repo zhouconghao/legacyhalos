@@ -289,7 +289,7 @@ def get_ccds(survey, ra, dec, pixscale, width):
     brickname = 'custom-{}'.format(custom_brickname(ra, dec))
     brick = BrickDuck(ra, dec, brickname)
 
-    targetwcs = wcs_for_brick(brick, W=np.float(width), H=np.float(width), pixscale=pixscale)
+    targetwcs = wcs_for_brick(brick, W=np.float64(width), H=np.float64(width), pixscale=pixscale)
     ccds = survey.ccds_touching_wcs(targetwcs)
 
     if ccds is None or np.sum(ccds.ccd_cuts == 0) == 0:
