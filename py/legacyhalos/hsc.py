@@ -12,6 +12,7 @@ import astropy
 import fitsio
 
 import legacyhalos.io
+from legacyhalos.ellipse import REF_APERTURES
 
 ZCOLUMN = 'Z_BEST'
 RACOLUMN = 'RA'
@@ -825,6 +826,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                 err = mpi_call_ellipse(galaxy, galaxydir, skydata, galaxyinfo=galaxyinfo,
                                        pixscale=pixscale, nproc=nproc, 
                                        bands=bands, refband=refband, sbthresh=SBTHRESH,
+                                       apertures=REF_APERTURES,
                                        delta_logsma=delta_logsma, maxsma=maxsma,
                                        write_donefile=False,
                                        input_ellipse=input_ellipse,
