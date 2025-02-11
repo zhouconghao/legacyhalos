@@ -207,7 +207,7 @@ def mpi_args():
 
     parser.add_argument('--first', type=int, help='Index of first object to process.')
     parser.add_argument('--last', type=int, help='Index of last object to process.')
-    parser.add_argument('--galaxylist', type=np.int32, nargs='*', default=None, help='List of galaxy names to process.')
+    parser.add_argument('--galaxylist', type=np.int, nargs='*', default=None, help='List of galaxy names to process.')
 
     parser.add_argument('--coadds', action='store_true', help='Build the custom coadds.')
     parser.add_argument('--pipeline-coadds', action='store_true', help='Build the pipelinecoadds.')
@@ -473,7 +473,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
         mge, centralmask = tractor2mge(central, factor=neighborfactor)
         #plt.clf() ; plt.imshow(centralmask, origin='lower') ; plt.savefig('junk-mask.png') ; pdb.set_trace()
         
-        iclose = np.where([centralmask[np.int32(by), np.int32(bx)]
+        iclose = np.where([centralmask[np.int(by), np.int(bx)]
                            for by, bx in zip(tractor.by, tractor.bx)])[0]
         
         srcs = tractor.copy()
@@ -868,6 +868,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                 err = mpi_call_ellipse(galaxy, galaxydir, skydata, galaxyinfo=galaxyinfo,
                                        pixscale=pixscale, nproc=nproc, 
                                        bands=bands, refband=refband, sbthresh=SBTHRESH,
+                                       apertures=APERTURES,
                                        delta_logsma=delta_logsma, maxsma=maxsma,
                                        write_donefile=False,
                                        input_ellipse=input_ellipse,
