@@ -484,8 +484,8 @@ def _get_psfsize_and_depth(tractor, bands, pixscale, incenter=False):
     W = np.max(tractor.by) - np.min(tractor.by)
     if incenter:
         dH = 0.1 * H
-        these = np.where((tractor.bx >= np.int(H / 2 - dH)) * (tractor.bx <= np.int(H / 2 + dH)) *
-                         (tractor.by >= np.int(H / 2 - dH)) * (tractor.by <= np.int(H / 2 + dH)))[0]
+        these = np.where((tractor.bx >= np.int32(H / 2 - dH)) * (tractor.bx <= np.int32(H / 2 + dH)) *
+                         (tractor.by >= np.int32(H / 2 - dH)) * (tractor.by <= np.int32(H / 2 + dH)))[0]
     else:
         #these = np.where(tractor.get(psfdepthcol) > 0)[0]
         these = np.arange(len(tractor))
@@ -630,7 +630,7 @@ def _read_image_data(data, filt2imfile, starmask=None, fill_value=0.0,
 
         # Dilate the mask, mask out a 10% border, and pack into a dictionary.
         mask = binary_dilation(mask, iterations=2)
-        edge = np.int(0.02*sz[0])
+        edge = np.int32(0.02*sz[0])
         mask[:edge, :] = True
         mask[:, :edge] = True
         mask[:, sz[0]-edge:] = True
