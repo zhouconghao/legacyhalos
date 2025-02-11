@@ -872,7 +872,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                     # recalculate the ratio so that the remaining values will scale correctly
                     ratio = (float(limit)/result[-1]) ** (1.0/(n-len(result)))
             # round, re-adjust to 0 indexing (i.e. minus 1) and return np.uint64 array
-            return np.array(list(map(lambda x: round(x)-1, result)), dtype=np.int)
+            return np.array(list(map(lambda x: round(x)-1, result)), dtype=np.int32)
 
         # this algorithm can fail if there are too few points
         nsma = np.ceil(maxsma / delta_logsma).astype('int')
