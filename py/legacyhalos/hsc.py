@@ -512,9 +512,9 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
             'largeshift': largeshift,
             'ra': tractor.ra[central], 'dec': tractor.dec[central],
             'bx': tractor.bx[central], 'by': tractor.by[central],
-            #'mw_transmission_g': tractor.mw_transmission_g[central],
-            #'mw_transmission_r': tractor.mw_transmission_r[central],
-            #'mw_transmission_z': tractor.mw_transmission_z[central],
+            'mw_transmission_g': tractor.mw_transmission_g[central],
+            'mw_transmission_r': tractor.mw_transmission_r[central],
+            'mw_transmission_z': tractor.mw_transmission_z[central],
             'ra_moment': radec_med[0], 'dec_moment': radec_med[1],
             #'ra_peak': radec_med[0], 'dec_peak': radec_med[1]
             }
@@ -709,7 +709,7 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
             'flux_g', 'flux_r', 'flux_z',
             'flux_ivar_g', 'flux_ivar_r', 'flux_ivar_z',
             'nobs_g', 'nobs_r', 'nobs_z',
-            #'mw_transmission_g', 'mw_transmission_r', 'mw_transmission_z', 
+            'mw_transmission_g', 'mw_transmission_r', 'mw_transmission_z', 
             'psfdepth_g', 'psfdepth_r', 'psfdepth_z',
             'psfsize_g', 'psfsize_r', 'psfsize_z']
     #if galex:
