@@ -24,7 +24,8 @@ RADIUS_CLUSTER_KPC = 250.0 # default cluster radius
 RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
 
 SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
-APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0] # multiples of MAJORAXIS
+# APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0] # multiples of MAJORAXIS
+APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0] # multiples of MAJORAXIS
 
 def get_galaxy_galaxydir(cat, datadir=None, htmldir=None, html=False):
     """Retrieve the galaxy name and the (nested) directory.
@@ -512,9 +513,9 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
             'largeshift': largeshift,
             'ra': tractor.ra[central], 'dec': tractor.dec[central],
             'bx': tractor.bx[central], 'by': tractor.by[central],
-            #'mw_transmission_g': tractor.mw_transmission_g[central],
-            #'mw_transmission_r': tractor.mw_transmission_r[central],
-            #'mw_transmission_z': tractor.mw_transmission_z[central],
+            'mw_transmission_g': tractor.mw_transmission_g[central],
+            'mw_transmission_r': tractor.mw_transmission_r[central],
+            'mw_transmission_z': tractor.mw_transmission_z[central],
             'ra_moment': radec_med[0], 'dec_moment': radec_med[1],
             #'ra_peak': radec_med[0], 'dec_peak': radec_med[1]
             }
@@ -709,7 +710,7 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
             'flux_g', 'flux_r', 'flux_z',
             'flux_ivar_g', 'flux_ivar_r', 'flux_ivar_z',
             'nobs_g', 'nobs_r', 'nobs_z',
-            #'mw_transmission_g', 'mw_transmission_r', 'mw_transmission_z', 
+            'mw_transmission_g', 'mw_transmission_r', 'mw_transmission_z', 
             'psfdepth_g', 'psfdepth_r', 'psfdepth_z',
             'psfsize_g', 'psfsize_r', 'psfsize_z']
     #if galex:
@@ -756,7 +757,7 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
 
     # Read the basic imaging data and masks.
     data = _read_image_data(data, filt2imfile, starmask=starmask,
-                            # filt2pixscale=filt2pixscale,
+                            filt2pixscale=filt2pixscale,
                             fill_value=fill_value, verbose=verbose)
     
     # Find the galaxies of interest.
