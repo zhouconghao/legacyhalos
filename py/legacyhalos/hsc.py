@@ -848,7 +848,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                                           pixscale=pixscale, redshift=onegal[ZCOLUMN],
                                           sky_tests=sky_tests, verbose=verbose)
 
-    maxsma, delta_logsma = None, 4
+    maxsma, delta_logsma = None, 6
     #maxsma, delta_logsma = 200, 10
 
     if sky_tests:
