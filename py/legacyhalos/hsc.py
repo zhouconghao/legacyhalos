@@ -563,7 +563,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
             img = ma.getdata(data[filt]).copy()
 
             # Get the PSF sources.
-            psfindx = np.where((tractor.type == 'PSF') * (getattr(tractor, 'flux_{}'.format(filt.lower())) / cenflux > threshmask))[0]
+            psfindx = np.where((tractor.type == 'PSF'))[0]
             if len(psfindx) > 0:
                 psfsrcs = tractor.copy()
                 psfsrcs.cut(psfindx)
