@@ -13,12 +13,20 @@ import fitsio
 
 import legacyhalos.io
 
-ZCOLUMN = 'Z_BEST'
-RACOLUMN = 'RA'
-DECCOLUMN = 'DEC'
-DIAMCOLUMN = 'RADIUS_MOSAIC' # [radius, arcsec]
-GALAXYCOLUMN = 'ID_S16A'
-REFIDCOLUMN = 'ID_S16A'
+# ZCOLUMN = 'Z_BEST'
+# RACOLUMN = 'RA'
+# DECCOLUMN = 'DEC'
+# DIAMCOLUMN = 'RADIUS_MOSAIC' # [radius, arcsec]
+# GALAXYCOLUMN = 'ID_S16A'
+# REFIDCOLUMN = 'ID_S16A'
+
+ZCOLUMN = "Z"
+RACOLUMN = "RA"
+DECCOLUMN = "DEC"
+DIAMCOLUMN = "RADIUS_MOSAIC"  # [radius, arcsec]
+GALAXYCOLUMN = "TARGETID"
+REFIDCOLUMN = "TARGETID"
+MAGCOLUMN = "MAG_R_DERED"
 
 RADIUS_CLUSTER_KPC = 250.0 # default cluster radius
 RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
@@ -280,8 +288,7 @@ def read_sample(first=None, last=None, galaxylist=None, verbose=False):
     #samplefile = os.path.join(hdir, 's18a_z0.07_0.12_rcmod_18.5_etg_muse_massive_0313.fits')
     
     # intermediate-z sample only
-    # samplefile = os.path.join(legacyhalos.io.legacyhalos_dir(), 's16a_massive_z_0.5_logm_11.4_decals_full_fdfc_bsm_ell.fits')
-    samplefile = os.path.join(legacyhalos.io.legacyhalos_dir(), 'hundr_k_bgs.fits')
+    samplefile = os.path.join(legacyhalos.io.legacyhalos_dir(), 's16a_massive_z_0.5_logm_11.4_decals_full_fdfc_bsm_ell.fits')
     #samplefile = os.path.join(hdir, 's16a_massive_z_0.5_logm_11.4_dec_30_for_john.fits')
 
     # low-z sample only
