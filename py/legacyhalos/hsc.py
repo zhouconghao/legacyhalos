@@ -280,7 +280,8 @@ def read_sample(first=None, last=None, galaxylist=None, verbose=False):
     #samplefile = os.path.join(hdir, 's18a_z0.07_0.12_rcmod_18.5_etg_muse_massive_0313.fits')
     
     # intermediate-z sample only
-    samplefile = os.path.join(legacyhalos.io.legacyhalos_dir(), 's16a_massive_z_0.5_logm_11.4_decals_full_fdfc_bsm_ell.fits')
+    # samplefile = os.path.join(legacyhalos.io.legacyhalos_dir(), 's16a_massive_z_0.5_logm_11.4_decals_full_fdfc_bsm_ell.fits')
+    samplefile = os.path.join(legacyhalos.io.legacyhalos_dir(), 'hundr_k_bgs.fits')
     #samplefile = os.path.join(hdir, 's16a_massive_z_0.5_logm_11.4_dec_30_for_john.fits')
 
     # low-z sample only
