@@ -49,9 +49,9 @@ def get_galaxy_galaxydir(cat, datadir=None, htmldir=None, html=False):
     if htmldir is None:
         htmldir = legacyhalos.io.legacyhalos_html_dir()
 
-    if not 'ID_S16A' in cat.colnames:
+    if not REFIDCOLUMN in cat.colnames:
         # need to handle the lowz catalog
-        print('Missing ID_S16A and NAME in catalog!')
+        print(f'Missing {REFIDCOLUMN} and NAME in catalog!')
         raise ValueError()
 
     if type(cat) is astropy.table.row.Row:
