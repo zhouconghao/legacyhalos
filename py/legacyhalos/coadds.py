@@ -424,10 +424,8 @@ def custom_coadds(onegal, galaxy=None, survey=None, radius_mosaic=None,
                      galaxydir=survey.output_dir, survey_dir=survey.survey_dir, run=run,
                      stagesuffix=stagesuffix)
     print(cmd, flush=True, file=log)
-    # err = subprocess.call(cmd.split(), stdout=log, stderr=log)
-    err = subprocess.call(cmd.split())
-    print(err, file=log)
-    #err = 0
+    err = subprocess.call(cmd.split(), stdout=log, stderr=log)
+    print(f"Error from cmd: {err}", file=log)
 
     # optionally write out the GALEX and WISE PSFs
     if unwise and write_wise_psf:
