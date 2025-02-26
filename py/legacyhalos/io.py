@@ -55,7 +55,7 @@ def legacyhalos_header(hdr=None):
         hdr = fits.header.Header()
 
     try:
-        cmd = 'cd {} && git describe --tags'.format(os.path.dirname(legacyhalos.__file__))
+        cmd = 'cd {} && git describe --always'.format(os.path.dirname(legacyhalos.__file__))
         ver = subprocess.check_output(cmd, shell=True, universal_newlines=True).strip()
         hdr['LEGHALOV'] = (ver, 'legacyhalos git version')
     except:
