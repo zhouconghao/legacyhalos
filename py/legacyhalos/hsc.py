@@ -443,7 +443,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
                                mgegalaxy.majoraxis * (1-mgegalaxy.eps), 
                                np.radians(mgegalaxy.theta-90), xobj, yobj)
 
-        return mgegalaxy, objmask
+        return mgegalaxy, objmask, small_tractor
 
     # Now, loop through each 'galaxy_indx' from bright to faint.
     data['mge'] = []
@@ -456,7 +456,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
         # and galaxies "near" it. Also restore the original pixels of the
         # central in case there was a poor deblend.
         largeshift = False
-        mge, centralmask = tractor2mge(central, galaxy_id=galaxy_id, factor=neighborfactor)
+        mge, centralmask, small_tractor = tractor2mge(central, galaxy_id=galaxy_id, factor=neighborfactor)
         #plt.clf() ; plt.imshow(centralmask, origin='lower') ; plt.savefig('junk-mask.png') ; pdb.set_trace()
         
         iclose = np.where([centralmask[int(by), int(bx)]
