@@ -394,6 +394,8 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
                                           (tractor.by - data['refband_width']/2)**2)])
         data['galaxy_indx'] = np.atleast_1d(galaxy_indx)
         data['galaxy_id'] = ''
+        
+    galaxy_id = data['galaxy_id']
 
     #print('Import hack!')
     #norm = simple_norm(img, 'log', min_percent=0.05, clip=True)
@@ -407,7 +409,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
     #else:
     #    psfsrcs = None
 
-    def tractor2mge(indx, factor=1.0):
+    def tractor2mge(indx, galaxy_id, factor=1.0):
         # Convert a Tractor catalog entry to an MGE object.
         class MGEgalaxy(object):
             pass
@@ -418,8 +420,11 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
         pa = pa % 180
 
         if tractor.shape_r[indx] < 1:
-            print('Galaxy half-light radius is < 1 arcsec!')
-            raise ValueError
+            print(f'Galaxy {galaxy_id} half-light radius is < 1 arcsec!')
+            small_tractor = True
+            # raise ValueError
+        else:
+            small_tractor = False
 
         majoraxis = factor * tractor.shape_r[indx] / filt2pixscale[refband] # [pixels]
 
@@ -451,7 +456,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
         # and galaxies "near" it. Also restore the original pixels of the
         # central in case there was a poor deblend.
         largeshift = False
-        mge, centralmask = tractor2mge(central, factor=neighborfactor)
+        mge, centralmask = tractor2mge(central, galaxy_id=galaxy_id, factor=neighborfactor)
         #plt.clf() ; plt.imshow(centralmask, origin='lower') ; plt.savefig('junk-mask.png') ; pdb.set_trace()
         
         iclose = np.where([centralmask[int(by), int(bx)]
@@ -498,6 +503,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
             #'mw_transmission_z': tractor.mw_transmission_z[central],
             'ra_moment': radec_med[0], 'dec_moment': radec_med[1],
             #'ra_peak': radec_med[0], 'dec_peak': radec_med[1]
+            "small_tractor": small_tractor,
             }
         for key in ('eps', 'majoraxis', 'pa', 'theta', 'xmed', 'ymed', 'xpeak', 'ypeak'):
             mge[key] = np.float32(getattr(mgegalaxy, key))
