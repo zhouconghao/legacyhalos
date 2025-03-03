@@ -525,12 +525,7 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
             cenflux = getattr(tractor, 'flux_{}'.format(filt))[central]
             satflux = getattr(srcs, 'flux_{}'.format(filt))
             if cenflux <= 0.0:
-                central_negative_flux = True
-                # raise ValueError('Central galaxy flux is negative!')
-            else:
-                central_negative_flux = False
-            
-            data["{}_central_negative_flux".format(filt)] = central_negative_flux
+                raise ValueError('Central galaxy flux is negative!')
             
             satindx = np.where(np.logical_or(
                 (srcs.type != 'PSF') * (srcs.shape_r > r50mask) *
