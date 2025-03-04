@@ -665,6 +665,14 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
     # Do all the files exist? If not, bail!
     missing_data = False
     for filt in bands:
+        
+        if data["{}_central_negative_flux".format(filt)] == True:
+            print(f"{galaxy} has negative flux in {filt} band.")
+            save_path = os.path.join(galaxydir, '{}-negative_flux-{}.flag'.format(galaxy, filt))
+            # just create a flag file
+            with open(save_path, 'w') as f:
+                pass
+        
         for ii, imtype in enumerate(filt2imfile[filt].keys()):
             #if imtype == 'sky': # this is a dictionary entry
             #    continue
