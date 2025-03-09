@@ -795,6 +795,10 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
                                  verbose=verbose)
 
     for filt in bands:
+        if "{}_central_negative_flux".format(filt) not in data.keys():
+            print(f"Warning! {filt}_central_negative_flux not found in data.keys().")
+            print(data.keys())
+            print(data["galaxy_id"])
         if data["{}_central_negative_flux".format(filt)] == True:
             print(f"{galaxy} has negative flux in {filt} band.")
             save_path = os.path.join(galaxydir, '{}-negative_flux-{}.flag'.format(galaxy, filt))
