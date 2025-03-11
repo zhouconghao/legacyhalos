@@ -387,8 +387,6 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
 
     # If the row-index of the central galaxy is not provided, use the source
     # nearest to the center of the field.
-    if len(data["galaxy_indx"]) == 0:
-        del data['galaxy_indx']
     if 'galaxy_indx' in data.keys():
         assert len(data['galaxy_indx']) != 0, 'galaxy_indx is empty!'
         galaxy_indx = np.atleast_1d(data['galaxy_indx'])
@@ -796,18 +794,30 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
     data = _build_multiband_mask(data, tractor, filt2pixscale,
                                  fill_value=fill_value,
                                  verbose=verbose)
+    
+    tractor_sample_match = True
+    if len(data["galaxy_indx"]) == 0:
+        tractor_sample_match = False
 
-    for filt in bands:
-        if "{}_central_negative_flux".format(filt) not in data.keys():
-            print(f"Warning! {filt}_central_negative_flux not found in data.keys().")
-            print(data.keys())
-            print(data["galaxy_id"])
-        if data["{}_central_negative_flux".format(filt)] == True:
-            print(f"{galaxy} has negative flux in {filt} band.")
-            save_path = os.path.join(galaxydir, '{}-negative_flux-{}.flag'.format(galaxy, filt))
-            # just create a flag file
-            with open(save_path, 'w') as f:
-                pass
+    data["tractor_sample_match"] = tractor_sample_match
+
+    if tractor_sample_match:
+        for filt in bands:
+            if "{}_central_negative_flux".format(filt) not in data.keys():
+                print(f"Warning! {filt}_central_negative_flux not found in data.keys().")
+                print(data.keys())
+                print(data["galaxy_id"])
+            if data["{}_central_negative_flux".format(filt)] == True:
+                print(f"{galaxy} has negative flux in {filt} band.")
+                save_path = os.path.join(galaxydir, '{}-negative_flux-{}.flag'.format(galaxy, filt))
+                # just create a flag file
+                with open(save_path, 'w') as f:
+                    pass
+    else:
+        save_path = os.path.join(galaxydir, '{}-no_tractor_sample_match.flag'.format(galaxy))
+        # just create a flag file
+        with open(save_path, 'w') as f:
+            pass
 
     # Gather some additional info that we want propagated to the output ellipse
     # catalogs.
