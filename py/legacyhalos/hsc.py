@@ -388,7 +388,6 @@ def _build_multiband_mask(data, tractor, filt2pixscale, fill_value=0.0,
     # If the row-index of the central galaxy is not provided, use the source
     # nearest to the center of the field.
     if 'galaxy_indx' in data.keys():
-        assert len(data['galaxy_indx']) != 0, 'galaxy_indx is empty!'
         galaxy_indx = np.atleast_1d(data['galaxy_indx'])
     else:
         galaxy_indx = np.array([np.argmin((tractor.bx - data['refband_height']/2)**2 +
