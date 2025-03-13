@@ -929,13 +929,25 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                     err = 0 # failed failure
             _done(galaxy, galaxydir, err, t0, 'ellipse', filesuffix, log=log)
     else:
-        mpi_call_ellipse(galaxy, galaxydir, data, galaxyinfo=galaxyinfo,
-                         pixscale=pixscale, nproc=nproc, 
-                         bands=bands, refband=refband, sbthresh=SBTHRESH,
-                         apertures=APERTURES,
-                         delta_logsma=delta_logsma, maxsma=maxsma,
-                         input_ellipse=input_ellipse,
-                         verbose=verbose, clobber=clobber, debug=debug, logfile=logfile)
+        # assume logfile exists
+        if bool(data):
+            if data['failed'] or not data["tractor_sample_match"]:
+                err = 1
+            else:
+                err = mpi_call_ellipse(galaxy, galaxydir, data, galaxyinfo=galaxyinfo,
+                                    pixscale=pixscale, nproc=nproc, 
+                                    bands=bands, refband=refband, sbthresh=SBTHRESH,
+                                    apertures=APERTURES,
+                                    delta_logsma=delta_logsma, maxsma=maxsma,
+                                    input_ellipse=input_ellipse,
+                                    verbose=verbose, clobber=clobber, debug=debug, logfile=logfile)
+        else:
+            if os.path.isfile(os.path.join(galaxydir, '{}-{}-coadds.isdone'.format(galaxy, filesuffix))):
+                err = 1 # successful failure
+            else:
+                err = 0 # failed failure
+            
+        _done(galaxy, galaxydir, err, t0, 'ellipse', filesuffix, log=logfile)
 
 def _get_mags(cat, rad='10', bands=['g', 'r', 'z'],
               kpc=False, pipeline=False, cog=False, R24=False, R25=False, R26=False):
