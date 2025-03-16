@@ -12,6 +12,7 @@ import astropy
 import fitsio
 
 import legacyhalos.io
+from legacyhalos.mpi import _done
 
 ZCOLUMN = 'Z_BEST'
 RACOLUMN = 'RA'
@@ -867,7 +868,6 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
     #maxsma, delta_logsma = 200, 10
 
     if sky_tests:
-        from legacyhalos.mpi import _done
 
         def _wrap_call_ellipse():
             skydata = deepcopy(data) # necessary?
@@ -932,6 +932,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
         # assume logfile exists
         if bool(data):
             if data['failed'] or not data["tractor_sample_match"]:
+                # do not run call ellipse if there is no tractor sample match
                 err = 1
             else:
                 err = mpi_call_ellipse(galaxy, galaxydir, data, galaxyinfo=galaxyinfo,
