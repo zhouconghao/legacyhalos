@@ -865,6 +865,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                                           sky_tests=sky_tests, verbose=verbose)
 
     maxsma, delta_logsma = None, 6
+    t0 = time.time()
     #maxsma, delta_logsma = 200, 10
 
     if sky_tests:
@@ -898,7 +899,6 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                     shutil.copy2(inellipsefile, outellipsefile)
             return err
 
-        t0 = time.time()
         if logfile:
             with open(logfile, 'a') as log:
                 with redirect_stdout(log), redirect_stderr(log):
