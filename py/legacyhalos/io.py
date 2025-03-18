@@ -150,6 +150,7 @@ def _get_ellipse_datamodel(sbthresh, apertures, bands=['g', 'r', 'z'],
         ('fitgeometry', None),
         ('input_ellipse', None),
         ('largeshift', None),
+        ('small_tractor', None),
 
         ('x0_moment', u.pixel),
         ('y0_moment', u.pixel),
