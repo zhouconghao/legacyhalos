@@ -814,6 +814,7 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
                 with open(save_path, 'w') as f:
                     pass
     else:
+        print(f"Tractor catalog does not match the sample catalog for {galaxy}.")
         save_path = os.path.join(galaxydir, '{}-no_tractor_sample_match.flag'.format(galaxy))
         # just create a flag file
         with open(save_path, 'w') as f:
