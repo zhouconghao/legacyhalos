@@ -12,6 +12,9 @@ def main():
     """Top-level wrapper.
 
     """
+
+    print('Starting at legacybgs-mpi {}'.format(time.asctime()), flush=True)
+
     import legacyhalos.io
     import legacyhalos.hsc
 
@@ -174,10 +177,10 @@ def main():
 
         # Need the cluster "radius" to build the coadds.
         radius_mosaic_arcsec = onegal[DIAMCOLUMN] / 2 # radius [arcsec]
-        subsky_radii = radius_mosaic_arcsec * np.array([1.0, 1.1,  # annulus 0
-                                                        1.2, 1.3,  # annulus 1
-                                                        1.3, 1.4,  # annulus 2
-                                                        1.4, 1.5]) # annulus 3
+        subsky_radii = 1.5 * radius_mosaic_arcsec * np.array([1.0, 1.1,  # annulus 0
+                                                              1.2, 1.3,  # annulus 1
+                                                              1.3, 1.4,  # annulus 2
+                                                              1.4, 1.5]) # annulus 3
         
         run = legacyhalos.io.get_run(onegal, racolumn=RACOLUMN, deccolumn=DECCOLUMN)
         survey = get_survey(run, output_dir=galaxydir)
@@ -218,7 +221,7 @@ def main():
                 input_ellipse = {'eps': onegal['MEAN_E'], 'pa': onegal['MEAN_PA']}
             else:
                 input_ellipse = None
-
+            print("Calling ellipse")
             call_ellipse(onegal, galaxy=galaxy, galaxydir=galaxydir, 
                          input_ellipse=input_ellipse,
                          bands=['g', 'r', 'z'], refband='r',

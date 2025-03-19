@@ -1,25 +1,27 @@
 #!/bin/bash
 
 #SBATCH --mem=256000
-#SBATCH --nodes=8
-#SBATCH --ntasks=88
+#SBATCH --nodes=1
+#SBATCH --ntasks=50
 #SBATCH --cpus-per-task=1
-#SBATCH --time=00:30:00
+#SBATCH --time=5:00:00
 #SBATCH --account=desi
-#SBATCH --qos=debug
+#SBATCH --qos=regular
 #SBATCH --constraint=cpu
 #SBATCH --licenses=cfs,SCRATCH
 #SBATCH --image=zhouconghao/legacyhalos:latest
-#SBATCH --output=/global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/bin/production_test/logslegacyhalos_array_test-%A-%a.txt
+#SBATCH --output=/global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/logslegacyhalos_array_test-%A-%a.txt
 #SBATCH --mail-user=czhou64@ucsc.edu
 #SBATCH --mail-type=ALL
 #SBATCH --module=mpich
 
 # sbatch legacyhsc-mpi.slurm
-
+source /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-env
 # coadds
 # time srun -N 64 -n 256 -c 8 shifter $LEGACYHALOS_CODE_DIR/bin/legacyhsc/legacyhsc-mpi.sh coadds 8
-time srun -N 8 -n 88 -c 1 shifter /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/bin/production_test/legacyhsc-mpi.sh ellipse 88
+# time srun -N 8 -n 88 -c 1 shifter /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-mpi.sh refcat 88
+# time srun -N 8 -n 400 -c 1 shifter /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-mpi.sh coadds 1
+time srun -N 1 -n 50 -c 1 shifter /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-mpi.sh ellipse 1
 
 # test
 #time srun -N 2 -n 64 -c 1 shifter $LEGACYHALOS_CODE_DIR/bin/legacyhsc/legacyhsc-mpi.sh test 1

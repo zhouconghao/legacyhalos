@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Shell script for running the various stages of the legacyhalos code using
 # MPI+shifter at NERSC. Required arguments:
@@ -16,23 +16,30 @@
 stage=$1
 ncores=$2
 
-source /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/bin/production_test/legacyhsc-env
-export LEGACYHALOS_CODE_DIR="/global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb"
+source /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-env
+export LEGACYHALOS_CODE_DIR="/global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos"
+
+echo "Starting the legacybgs mpi script"
+echo "LEGACYHALOS_CODE_DIR = "$LEGACYHALOS_CODE_DIR
 
 #maxmem=134217728 # Cori/Haswell = 128 GB (limit the memory per job).
 #grep -q "Xeon Phi" /proc/cpuinfo && maxmem=100663296 # Cori/KNL = 98 GB
 #let usemem=${maxmem}*${ncores}/32
 
+
 if [ $stage = "test" ]; then
-    time python $LEGACYHALOS_CODE_DIR/bin/production_test/legacyhsc-mpi --help
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --help
 elif [ $stage = "coadds" ]; then
-    time python $LEGACYHALOS_CODE_DIR/bin/production_test/legacyhsc-mpi --coadds --nproc $ncores --mpi --verbose --clobber
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --coadds --nproc $ncores --mpi --verbose --clobber
 elif [ $stage = "pipeline-coadds" ]; then
-    time python $LEGACYHALOS_CODE_DIR/bin/production_test/legacyhsc-mpi --pipeline-coadds --nproc $ncores --mpi --verbose
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --pipeline-coadds --nproc $ncores --mpi --verbose
 elif [ $stage = "ellipse" ]; then
-    time python $LEGACYHALOS_CODE_DIR/bin/production_test/legacyhsc-mpi --ellipse --nproc $ncores --mpi --verbose --sky-tests
+    echo "Running the ellipse stage"
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --ellipse --nproc $ncores --mpi --verbose
 elif [ $stage = "htmlplots" ]; then
-    time python $LEGACYHALOS_CODE_DIR/bin/production_test/legacyhsc-mpi --htmlplots --nproc $ncores --mpi --verbose --clobber
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --htmlplots --nproc $ncores --mpi --verbose --clobber
+elif [ $stage = "refcat" ]; then
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --build-refcat --clobber --debug --verbose
 else
     echo "Unrecognized stage "$stage
 fi
