@@ -357,7 +357,7 @@ def custom_coadds(onegal, galaxy=None, survey=None, radius_mosaic=None,
 
     # Run the pipeline!
     cmd = 'python {legacypipe_dir}/py/legacypipe/runbrick.py '
-    cmd += '--radec {ra} {dec} --width {width} --height {width} --pixscale {pixscale} '
+    cmd += '--radec {ra:.10f} {dec:.10f} --width {width} --height {width} --pixscale {pixscale} '
     cmd += '--threads {threads} --outdir {outdir} --bands {bands} '
     cmd += '--survey-dir {survey_dir} --run {run} '
     if write_all_pickles:
