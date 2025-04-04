@@ -343,6 +343,8 @@ def write_ellipsefit(galaxy, galaxydir, ellipsefit, filesuffix='', galaxy_id='',
     for key, unit in _get_ellipse_datamodel(sbthresh, apertures, bands=bands, add_datamodel_cols=add_datamodel_cols,
                                             copy_mw_transmission=copy_mw_transmission):
         if key not in datakeys:
+            print("Key {} not in datadict!".format(key))
+            print(datadict.keys())
             raise ValueError('Data model change -- no column {} for galaxy {}!'.format(key, galaxy))
         data = datadict[key]
         if np.isscalar(data):# or len(np.array(data)) > 1:
