@@ -409,7 +409,7 @@ def read_ellipsefit(galaxy, galaxydir, filesuffix='', galaxy_id='', verbose=True
         fsuff = '-{}'.format(filesuffix)
 
     if ellipsefitfile is None:
-        ellipsefitfile = os.path.join(galaxydir, '{}{}-ellipse{}.fits'.format(galaxy, fsuff, galid))
+        ellipsefitfile = os.path.join(galaxydir, '{}{}{}-ellipse.fits'.format(galaxy, fsuff, galid))
         
     if os.path.isfile(ellipsefitfile):
         data = Table(fitsio.read(ellipsefitfile))
