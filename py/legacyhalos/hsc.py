@@ -953,43 +953,59 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                     
                 _done(galaxy, galaxydir, err, t0, 'ellipse', filesuffix, log=log)
 
-def _get_mags(cat, rad='10', bands=['g', 'r', 'z'],
-              kpc=False, pipeline=False, cog=False, R24=False, R25=False, R26=False):
+def _get_mags(
+    cat,
+    rad="10",
+    bands=["g", "r", "z"],
+    kpc=False,
+    pipeline=False,
+    cog=False,
+    R24=False,
+    R25=False,
+    R26=False,
+):
     res = []
     for band in bands:
         mag = None
+
         if kpc:
-            iv = cat['FLUX{}_IVAR_{}'.format(rad, band.upper())][0]
-            ff = cat['FLUX{}_{}'.format(rad, band.upper())][0]
+            iv = cat["FLUX{}_IVAR_{}".format(rad, band.upper())][0]
+            ff = cat["FLUX{}_{}".format(rad, band.upper())][0]
         elif pipeline:
-            iv = cat['flux_ivar_{}'.format(band.lower())]
-            ff = cat['flux_{}'.format(band.lower())]
+            iv = cat["flux_ivar_{}".format(band.lower())]
+            ff = cat["flux_{}".format(band.lower())]
         elif R24:
-            mag = cat['{}_mag_sb24'.format(band.lower())]
+            mag = cat["{}_mag_sb24".format(band.lower())]
         elif R25:
-            mag = cat['{}_mag_sb25'.format(band.lower())]
+            mag = cat["{}_mag_sb25".format(band.lower())]
         elif R26:
-            mag = cat['{}_mag_sb26'.format(band.lower())]
+            mag = cat["{}_mag_sb26".format(band.lower())]
         elif cog:
-            mag = cat['cog_mtot_{}'.format(band.lower())]
+            mag = cat["cog_mtot_{}".format(band.lower())]
+            if mag is None:
+                print("No COG magnitude for {}-band!".format(band))
+                print(cat)
         else:
-            print('Thar be rocks ahead!')
-        if mag:
-            res.append('{:.3f}'.format(mag))
+            print("Thar be rocks ahead!")
+
+        if mag is not None:
+            res.append("{:.3f}".format(mag))
         else:
+            if ff is None:
+                print("Flux is not assgined for {}-band!".format(band))
+                print("Magnitude is {}".format(mag))
             if ff > 0:
-                mag = 22.5-2.5*np.log10(ff)
+                mag = 22.5 - 2.5 * np.log10(ff)
                 if iv > 0:
                     ee = 1 / np.sqrt(iv)
                     magerr = 2.5 * ee / ff / np.log(10)
-                res.append('{:.3f}'.format(mag))
-                #res.append('{:.3f}+/-{:.3f}'.format(mag, magerr))
+                res.append("{:.3f}".format(mag))
             elif ff < 0 and iv > 0:
                 # upper limit
-                mag = 22.5-2.5*np.log10(1/np.sqrt(iv))
-                res.append('>{:.3f}'.format(mag))
+                mag = 22.5 - 2.5 * np.log10(1 / np.sqrt(iv))
+                res.append(">{:.3f}".format(mag))
             else:
-                res.append('...')
+                res.append("...")
     return res
 
 def build_htmlhome(sample, htmldir, htmlhome='index.html', pixscale=0.262,
