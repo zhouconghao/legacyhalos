@@ -427,7 +427,7 @@ def read_ellipsefit(galaxy, galaxydir, filesuffix='', galaxy_id='', verbose=True
             #ellipsefit[key.lower()] = np.array(val, dtype=data[key].dtype)
     else:
         if verbose:
-            print('File {} not found!'.format(ellipsefitfile))
+            print('Ellipse fit file {} not found!'.format(ellipsefitfile))
         if asTable:
             ellipsefit = Table()
         else:

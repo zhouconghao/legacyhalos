@@ -19,7 +19,8 @@ from photutils.isophote.fitter import CentralEllipseFitter
 
 import legacyhalos.io
 
-REF_SBTHRESH = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26] # surface brightness thresholds
+# REF_SBTHRESH = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26] # surface brightness thresholds
+REF_SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
 REF_APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0] # multiples of MAJORAXIS
 
 # ndim>1 columns when ellipse-fitting fails; note, this list is used by various
@@ -144,6 +145,7 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
 
     #print('Should we measure these radii from the extinction-corrected photometry?')
     for sbcut in sbthresh:
+        print("Measuring the radius at {:.1f} mag/arcsec2.".format(sbcut))
         if sbprofile['mu_{}'.format(refband)].max() < sbcut or sbprofile['mu_{}'.format(refband)].min() > sbcut:
             print('Insufficient profile to measure the radius at {:.1f} mag/arcsec2!'.format(sbcut))
             results['sma_sb{:0g}'.format(sbcut)] = np.float32(0.0)

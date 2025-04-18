@@ -24,7 +24,8 @@ REFIDCOLUMN = 'ID_S16A'
 RADIUS_CLUSTER_KPC = 250.0 # default cluster radius
 RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
 
-SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
+# SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
+from legacyhalos.ellipse import REF_SBTHRESH as SBTHRESH
 APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0] # multiples of MAJORAXIS
 
 def get_galaxy_galaxydir(cat, datadir=None, htmldir=None, html=False):
