@@ -47,9 +47,11 @@ def main():
                                              verbose=args.verbose)
         if len(sample) == 0:
             return
+        print("Finish reading sample", flush=True)
 
     if comm:
         sample = comm.bcast(sample, root=0)
+        print("Finish broadcasting sample", flush=True)
 
     # Building the web-page and integrating the ellipse-fitting results work on
     # the full sample, so do that here and then return.
@@ -110,7 +112,9 @@ def main():
     # Determine how many more galaxies we need to analyze and divide them across
     # ranks.
     if rank == 0:
+        print("Start finding missing files")
         suffix, groups, _, fail = legacyhalos.hsc.missing_files(args, sample, size)
+        print("Finish finding missing files")
     else:
         groups, suffix = [], ''
 

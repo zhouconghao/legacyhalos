@@ -16,7 +16,7 @@
 stage=$1
 ncores=$2
 
-source /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-env
+# source /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-env
 export LEGACYHALOS_CODE_DIR="/global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos"
 
 echo "Starting the legacybgs mpi script"
@@ -30,7 +30,7 @@ echo "LEGACYHALOS_CODE_DIR = "$LEGACYHALOS_CODE_DIR
 if [ $stage = "test" ]; then
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --help
 elif [ $stage = "coadds" ]; then
-    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --coadds --nproc $ncores --mpi --verbose --clobber
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --coadds --nproc $ncores --mpi --verbose
 elif [ $stage = "pipeline-coadds" ]; then
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --pipeline-coadds --nproc $ncores --mpi --verbose
 elif [ $stage = "ellipse" ]; then
@@ -38,6 +38,8 @@ elif [ $stage = "ellipse" ]; then
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --ellipse --nproc $ncores --mpi --verbose
 elif [ $stage = "htmlplots" ]; then
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --htmlplots --nproc $ncores --mpi --verbose --clobber
+elif [ $stage = "htmlindex" ]; then
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --htmlindex --nproc $ncores --mpi --verbose --clobber
 elif [ $stage = "refcat" ]; then
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --build-refcat --clobber --debug --verbose
 else
