@@ -21,7 +21,7 @@ DIAMCOLUMN = 'RADIUS_MOSAIC' # [radius, arcsec]
 GALAXYCOLUMN = 'ID_S16A'
 REFIDCOLUMN = 'ID_S16A'
 
-RADIUS_CLUSTER_KPC = 250.0 # default cluster radius
+RADIUS_CLUSTER_KPC = 300.0 # default cluster radius
 RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
 
 # SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
