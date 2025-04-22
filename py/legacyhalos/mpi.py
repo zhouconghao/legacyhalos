@@ -41,7 +41,7 @@ def call_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                  copy_mw_transmission=False, 
                  verbose=False, debug=False, write_donefile=True,
                  logfile=None, input_ellipse=None, sbthresh=None,
-                 apertures=None, clobber=False):
+                 apertures=None, abs_apertures=False, clobber=False):
     """Wrapper script to do ellipse-fitting.
 
     """
@@ -72,7 +72,8 @@ def call_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                     galaxy, galaxydir, data, galaxyinfo=galaxyinfo,
                     bands=bands, refband=refband,
                     pixscale=pixscale, nproc=nproc,
-                    sbthresh=sbthresh, apertures=apertures, input_ellipse=input_ellipse,
+                    sbthresh=sbthresh, apertures=apertures, abs_apertures=abs_apertures,
+                    input_ellipse=input_ellipse,
                     delta_logsma=delta_logsma, maxsma=maxsma, logsma=logsma,
                     copy_mw_transmission=copy_mw_transmission,
                     verbose=verbose, clobber=clobber)

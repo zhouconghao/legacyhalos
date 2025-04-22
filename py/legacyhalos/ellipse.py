@@ -800,9 +800,9 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                          refband='r', nproc=1, 
                          integrmode='median', nclip=3, sclip=3,
                          maxsma=None, logsma=True, delta_logsma=5.0, delta_sma=1.0,
-                         sbthresh=REF_SBTHRESH, apertures=REF_APERTURES,
-                         copy_mw_transmission=False, 
+                         sbthresh=REF_SBTHRESH, apertures=REF_APERTURES, 
                          abs_apertures=False,
+                         copy_mw_transmission=False, 
                          galaxyinfo=None, input_ellipse=None,
                          fitgeometry=False, nowrite=False, verbose=False):
     """Multi-band ellipse-fitting, broadly based on--
