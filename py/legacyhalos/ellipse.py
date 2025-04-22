@@ -109,6 +109,7 @@ def apphot_one(img, mask, theta, x0, y0, aa, bb, pixscale, variance=False, iscir
 
 def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
                 seed=1, sbthresh=REF_SBTHRESH, apertures=REF_APERTURES,
+                abs_apertures=False,
                 nmonte=30):
     """Measure the curve of growth (CoG) by performing elliptical aperture
     photometry.
@@ -194,13 +195,25 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
         else:
             results['sma_sb{:0g}'.format(sbcut)] = np.float32(0.0)
             results['sma_ivar_sb{:0g}'.format(sbcut)] = np.float32(0.0)
+    
+    if abs_apertures:
+        print("Using absolute apertures!")
+    else:
+        print("Using relative apertures!")
+    print(f"apertures = {apertures}")
 
     # aperture radii
     for iap, ap in enumerate(apertures):
-        if refellipsefit['sma_moment'] > 0:
-            results['sma_ap{:02d}'.format(iap+1)] = np.float32(refellipsefit['sma_moment'] * ap) # [arcsec]
+        # use absolute apertures if option is set
+        if abs_apertures:
+            if refellipsefit['sma_moment'] > 0:
+                results['sma_ap{:02d}'.format(iap+1)] = np.float32(ap)
         else:
-            results['sma_ap{:02d}'.format(iap+1)] = np.float32(0.0)
+            if refellipsefit['sma_moment'] > 0:
+                results['sma_ap{:02d}'.format(iap+1)] = np.float32(refellipsefit['sma_moment'] * ap) # [arcsec]
+            else:
+                results['sma_ap{:02d}'.format(iap+1)] = np.float32(0.0)
+    
 
     chi2fail = 1e8
     nparams = 4
@@ -523,8 +536,10 @@ def _unpack_isofit(ellipsefit, filt, isofit, failed=False):
     
     if failed:
         ellipsefit.update(_fill_failed())
+        print("Ellipse fitting failed!")
     else:
         I = np.isfinite(isofit.intens) * np.isfinite(isofit.int_err)
+        print(f"number of good isophotes = {np.sum(I)}")
         if np.sum(I) == 0:
             ellipsefit.update(_fill_failed())
         else:
@@ -584,7 +599,7 @@ def integrate_isophot_one(img, sma, theta, eps, x0, y0,
 
     return out
 
-def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=False,
+def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=True,
                       cut_on_cog=False, sdss=False, linear=False):
     """Convert ellipse-fitting results to a magnitude, color, and surface brightness
     profiles.
@@ -630,8 +645,10 @@ def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=False,
             
         if sma_not_radius:
             radius = sma * pixscale # [arcsec]
+            print("Using semi-major axis as the radius.")
         else:
             radius = sma * np.sqrt(1 - eps) * pixscale # circularized radius [arcsec]
+            print("Using circularized radius.")
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
@@ -641,8 +658,10 @@ def ellipse_sbprofile(ellipsefit, minerr=0.0, snrmin=1.0, sma_not_radius=False,
                 keep = np.isfinite(sb) * ((sb / sberr) > snrmin)
                 
             if cut_on_cog:
+                print("Cutting on the curve of growth.")
                 keep *= (ellipsefit['sma_{}'.format(filt.lower())] * pixscale) <= np.max(ellipsefit['cog_sma_{}'.format(filt.lower())])
             keep = np.where(keep)[0]
+            print(f"Keep {len(keep)} sb out of {len(sb)}")
                 
             sbprofile['keep_{}'.format(filt.lower())] = keep
 
@@ -783,6 +802,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                          maxsma=None, logsma=True, delta_logsma=5.0, delta_sma=1.0,
                          sbthresh=REF_SBTHRESH, apertures=REF_APERTURES,
                          copy_mw_transmission=False, 
+                         abs_apertures=False,
                          galaxyinfo=None, input_ellipse=None,
                          fitgeometry=False, nowrite=False, verbose=False):
     """Multi-band ellipse-fitting, broadly based on--
@@ -906,6 +926,11 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
     # Integrate to the edge [pixels].
     if maxsma is None:
         maxsma = 0.95 * (data['refband_width']/2) / np.cos(geometry.pa % (np.pi/4))
+        refband_width = data["refband_width"]
+        print(f"refband_width = {refband_width}")
+        print(f"maxsma = {maxsma} pixels")
+        print(f"maxsma = {maxsma * data['refpixscale']} arcsec")
+
     ellipsefit['maxsma'] = np.float32(maxsma) # [pixels]
 
     if logsma:
@@ -975,6 +1000,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
         #filtsma = np.round(sma[::int(1/(pixscalefactor))] * pixscalefactor).astype('f4')
         filtsma = np.unique(filtsma)
         assert(len(np.unique(filtsma)) == len(filtsma))
+        print(f"sma in {filt} = {filtsma}")
     
         # Loop on the reference band isophotes.
         t0 = time.time()
@@ -1020,7 +1046,7 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
     print('Performing elliptical aperture photometry.')
     t0 = time.time()
     cog = ellipse_cog(bands, data, ellipsefit, igal=igal,
-                      pool=pool, sbthresh=sbthresh, apertures=apertures)
+                      pool=pool, sbthresh=sbthresh, apertures=apertures, abs_apertures=abs_apertures)
     ellipsefit.update(cog)
     del cog
     print('Time = {:.3f} min'.format( (time.time() - t0) / 60))
@@ -1053,6 +1079,7 @@ def legacyhalos_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                         bands=['g', 'r', 'z'], integrmode='median',
                         nclip=3, sclip=3, sbthresh=REF_SBTHRESH,
                         apertures=REF_APERTURES,
+                        abs_apertures=False,
                         delta_sma=1.0, delta_logsma=5, maxsma=None, logsma=True,
                         copy_mw_transmission=False, 
                         input_ellipse=None, fitgeometry=False,
@@ -1094,6 +1121,7 @@ def legacyhalos_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                                                   delta_sma=delta_sma, logsma=logsma,
                                                   refband=refband, nproc=nproc, sbthresh=sbthresh,
                                                   apertures=apertures,
+                                                  abs_apertures=abs_apertures,
                                                   integrmode=integrmode, nclip=nclip, sclip=sclip,
                                                   input_ellipse=input_ellipse,
                                                   copy_mw_transmission=copy_mw_transmission,
