@@ -19,8 +19,7 @@ from photutils.isophote.fitter import CentralEllipseFitter
 
 import legacyhalos.io
 
-# REF_SBTHRESH = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26] # surface brightness thresholds
-REF_SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
+REF_SBTHRESH = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26, 27, 28, 29] # surface brightness thresholds
 REF_APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0] # multiples of MAJORAXIS
 
 # ndim>1 columns when ellipse-fitting fails; note, this list is used by various
