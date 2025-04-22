@@ -26,7 +26,9 @@ RADIUS_CLUSTER_LOWZ_KPC = 150.0 # default cluster radius
 
 # SBTHRESH = [23.0, 24.0, 25.0, 26.0] # surface brightness thresholds
 from legacyhalos.ellipse import REF_SBTHRESH as SBTHRESH
-APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0] # multiples of MAJORAXIS
+# APERTURES = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0] # multiples of MAJORAXIS
+APERTURES = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] # in arcsec
+ABS_APERTURES = True
 
 def get_galaxy_galaxydir(cat, datadir=None, htmldir=None, html=False):
     """Retrieve the galaxy name and the (nested) directory.
@@ -1108,6 +1110,22 @@ def build_htmlpage_one(ii, gal, galaxy1, galaxydir1, htmlgalaxydir1, htmlhome, h
     
     js = legacyhalos.html.html_javadate()
 
+    coadd_log_file = os.path.join(galaxydir1, "{}-coadds.log".format(galaxy1))
+    ellipse_log_file = os.path.join(galaxydir1, "{}-ellipse.log".format(galaxy1))
+    html_log_file = os.path.join(galaxydir1, "{}-html.log".format(galaxy1))
+
+    shutil.copy2(
+        coadd_log_file, os.path.join(htmlgalaxydir1, "{}-coadds.log".format(galaxy1))
+    )
+
+    shutil.copy2(
+        ellipse_log_file, os.path.join(htmlgalaxydir1, "{}-ellipse.log".format(galaxy1))
+    )
+
+    shutil.copy2(
+        html_log_file, os.path.join(htmlgalaxydir1, "{}-html.log".format(galaxy1))
+    )
+
     # Support routines--
 
     def _read_ccds_tractor_sample(prefix):
@@ -1331,6 +1349,41 @@ def build_htmlpage_one(ii, gal, galaxy1, galaxydir1, htmlgalaxydir1, htmlhome, h
             html.write('</table>\n')
             #html.write('<br />\n')
 
+    def _html_log(html):
+        html.write("<h2>Log files</h2>\n")
+        html.write("<br />\n")
+        html.write('<a href="./{}-coadds.log">coadd log</a>\n'.format(galaxy1))
+        html.write("<br />\n")
+        html.write('<a href="./{}-ellipse.log">ellipse log</a>\n'.format(galaxy1))
+        html.write("<br />\n")
+        html.write('<a href="./{}-html.log">HTML log</a>\n'.format(galaxy1))
+        html.write("<br />\n")
+
+        # html.write("<h3>coadd log</h3>\n")
+
+        # # html.write("<pre>\n")
+
+        # html.write('<pre style="font-size: 0.8em;">\n')
+
+        # with open(coadd_log_file, "r") as log:
+
+        #     html.write(log.read())
+
+        # html.write("</pre>\n")
+
+
+
+        # html.write("<h3>Ellipse Log</h3>\n")
+
+        # html.write('<pre style="font-size: 0.8em;">\n')
+
+        # with open(ellipse_log_file, "r") as log:
+
+        #     html.write(log.read())
+
+        # html.write("</pre>\n")
+
+
     # Read the catalogs and then build the page--
     nccds, tractor, sample = _read_ccds_tractor_sample(prefix='custom')
 
@@ -1354,6 +1407,7 @@ def build_htmlpage_one(ii, gal, galaxy1, galaxydir1, htmlgalaxydir1, htmlhome, h
         _html_galaxy_properties(html, gal)
         _html_image_mosaics(html)
         _html_ellipsefit_and_photometry(html, tractor, sample)
+        _html_log(html)
 
         html.write('<br /><br />\n')
         html.write('<a href="../../{}">Home</a>\n'.format(htmlhome))
