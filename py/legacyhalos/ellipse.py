@@ -561,6 +561,40 @@ def _integrate_isophot_one(args):
     """Wrapper function for the multiprocessing."""
     return integrate_isophot_one(*args)
 
+class _Timeout(Exception):
+    pass
+
+def _alarm_handler(signum, frame):
+    raise _Timeout()
+
+def _integrate_with_retry(args, max_retries=5, timeout=60):
+    img, sma, pa, eps, x0, y0, integrmode, sclip, nclip = args
+    for attempt in range(1, max_retries+1):
+        try:
+            # arm the clock
+            signal.signal(signal.SIGALRM, _alarm_handler)
+            signal.alarm(timeout)
+
+            # do your work
+            result = _integrate_isophot_one(
+                img, sma, pa, eps, x0, y0, integrmode, sclip, nclip
+            )
+
+            # disarm the clock
+            signal.alarm(0)
+            return result
+
+        except _Timeout:
+            print(f"  ↻ timeout after {timeout}s on sma={sma} (attempt {attempt}/{max_retries})")
+        except Exception as e:
+            print(f"  ↻ error ({e!r}) on sma={sma} (attempt {attempt}/{max_retries})")
+        finally:
+            signal.alarm(0)
+
+    # if we get here, all retries failed
+    print(f"  ✗ giving up on sma={sma}")
+    raise RuntimeError(f"isophot failed for sma={sma}")
+
 def integrate_isophot_one(img, sma, theta, eps, x0, y0, 
                           integrmode, sclip, nclip):
     """Integrate the ellipse profile at a single semi-major axis.
@@ -1032,40 +1066,6 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                 #    pdb.set_trace()
                 ellipsefit = _unpack_isofit(ellipsefit, filt, None, failed=True)
             else:
-                class _Timeout(Exception):
-                    pass
-
-                def _alarm_handler(signum, frame):
-                    raise _Timeout()
-
-                def _integrate_with_retry(args, max_retries=5, timeout=60):
-                    img, sma, pa, eps, x0, y0, integrmode, sclip, nclip = args
-                    for attempt in range(1, max_retries+1):
-                        try:
-                            # arm the clock
-                            signal.signal(signal.SIGALRM, _alarm_handler)
-                            signal.alarm(timeout)
-
-                            # do your work
-                            result = _integrate_isophot_one(
-                                img, sma, pa, eps, x0, y0, integrmode, sclip, nclip
-                            )
-
-                            # disarm the clock
-                            signal.alarm(0)
-                            return result
-
-                        except _Timeout:
-                            print(f"  ↻ timeout after {timeout}s on sma={sma} (attempt {attempt}/{max_retries})")
-                        except Exception as e:
-                            print(f"  ↻ error ({e!r}) on sma={sma} (attempt {attempt}/{max_retries})")
-                        finally:
-                            signal.alarm(0)
-
-                    # if we get here, all retries failed
-                    print(f"  ✗ giving up on sma={sma}")
-                    raise RuntimeError(f"isophot failed for sma={sma}")
-
                 # … later, swap your map to use this:
                 isobandfit = pool.map(
                     _integrate_with_retry,
