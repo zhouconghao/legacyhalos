@@ -277,14 +277,34 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
             with np.errstate(all='ignore'):
                 with warnings.catch_warnings():
                     warnings.simplefilter('ignore', category=AstropyUserWarning)
-                    cogflux = pool.map(_apphot_one, [(img, mask, theta, x0, y0, aa, bb, pixscale, False, iscircle)
-                                                     for aa, bb in zip(smapixels, smbpixels)])
+                    # cogflux = pool.map(_apphot_one, [(img, mask, theta, x0, y0, aa, bb, pixscale, False, iscircle)
+                    #                                  for aa, bb in zip(smapixels, smbpixels)])
 
-                    # compute the fraction of masked pixels
-                    nmasked = pool.map(_apphot_one, [(np.ones_like(img), np.logical_not(mask), theta, x0, y0, aa, bb, pixscale, False, iscircle)
-                                                       for aa, bb in zip(smapixels, smbpixels)])
-                    npix = pool.map(_apphot_one, [(np.ones_like(img), np.zeros_like(mask), theta, x0, y0, aa, bb, pixscale, False, iscircle)
-                                                  for aa, bb in zip(smapixels, smbpixels)])
+                    # # compute the fraction of masked pixels
+                    # nmasked = pool.map(_apphot_one, [(np.ones_like(img), np.logical_not(mask), theta, x0, y0, aa, bb, pixscale, False, iscircle)
+                    #                                    for aa, bb in zip(smapixels, smbpixels)])
+                    # npix = pool.map(_apphot_one, [(np.ones_like(img), np.zeros_like(mask), theta, x0, y0, aa, bb, pixscale, False, iscircle)
+                    #                               for aa, bb in zip(smapixels, smbpixels)])
+
+                    # --- build the argument lists once ------------------------------------------
+                    arglist  = [(img, mask, theta, x0, y0, aa, bb, pixscale, False, iscircle)
+                                for aa, bb in zip(smapixels, smbpixels)]
+
+                    # --- core flux in each aperture ---------------------------------------------
+                    cogflux = [_apphot_one(args) for args in arglist]
+
+                    # --- number of masked / total pixels ----------------------------------------
+                    nmasked = [_apphot_one((np.ones_like(img),
+                                    np.logical_not(mask),
+                                    theta, x0, y0, aa, bb, pixscale, False, iscircle))
+                        for aa, bb in zip(smapixels, smbpixels)
+                    ]
+
+                    npix = [_apphot_one((np.ones_like(img),
+                                    np.zeros_like(mask),
+                                    theta, x0, y0, aa, bb, pixscale, False, iscircle))
+                        for aa, bb in zip(smapixels, smbpixels)
+                    ]
                     
                     if len(cogflux) > 0:
                         cogflux = np.hstack(cogflux)
