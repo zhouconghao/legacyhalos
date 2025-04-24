@@ -1480,7 +1480,7 @@ def make_html(sample=None, datadir=None, htmldir=None, bands=('g', 'r', 'z'),
     nexthtmlgalaxydir = np.roll(np.atleast_1d(htmlgalaxydir), -1)
     prevhtmlgalaxydir = np.roll(np.atleast_1d(htmlgalaxydir), 1)
 
-    mp = multiproc(nthreads=nproc)
+    # mp = multiproc(nthreads=nproc)
     args = []
     for ii, (gal, galaxy1, galaxydir1, htmlgalaxydir1) in enumerate(zip(
         sample, np.atleast_1d(galaxy), np.atleast_1d(galaxydir), np.atleast_1d(htmlgalaxydir))):
@@ -1488,6 +1488,6 @@ def make_html(sample=None, datadir=None, htmldir=None, bands=('g', 'r', 'z'),
                      racolumn, deccolumn, diamcolumn, pixscale, nextgalaxy,
                      prevgalaxy, nexthtmlgalaxydir, prevhtmlgalaxydir, verbose,
                      clobber, fix_permissions])
-    ok = mp.map(_build_htmlpage_one, args)
+    ok = [_build_htmlpage_one(arg) for arg in args]
     
     return 1
