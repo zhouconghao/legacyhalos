@@ -567,7 +567,7 @@ class _Timeout(Exception):
 def _alarm_handler(signum, frame):
     raise _Timeout()
 
-def _integrate_with_retry(args, max_retries=5, timeout=180):
+def _integrate_with_retry(args, max_retries=10, timeout=30):
     img, sma, pa, eps, x0, y0, integrmode, sclip, nclip = args
     for attempt in range(1, max_retries+1):
         try:
@@ -1067,9 +1067,23 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                 ellipsefit = _unpack_isofit(ellipsefit, filt, None, failed=True)
             else:
                 # … later, swap your map to use this:
-                isobandfit = pool.map(
-                    _integrate_with_retry,
-                    [(
+                # isobandfit = pool.map(
+                #     _integrate_with_retry,
+                #     [(
+                #         img,
+                #         _sma,
+                #         ellipsefit['pa_moment'],
+                #         ellipsefit['eps_moment'],
+                #         x0,
+                #         y0,
+                #         integrmode,
+                #         sclip,
+                #         nclip
+                #     ) for _sma in filtsma]
+                # )
+                
+                isobandfit = [
+                    _integrate_with_retry((
                         img,
                         _sma,
                         ellipsefit['pa_moment'],
@@ -1079,8 +1093,8 @@ def ellipsefit_multiband(galaxy, galaxydir, data, igal=0, galaxy_id='',
                         integrmode,
                         sclip,
                         nclip
-                    ) for _sma in filtsma]
-                )
+                    )) for _sma in filtsma
+                ]
                 # isobandfit = pool.map(_integrate_isophot_one, [(
                 #     img, _sma, ellipsefit['pa_moment'], ellipsefit['eps_moment'], x0,
                 #     y0, integrmode, sclip, nclip) for _sma in filtsma])
