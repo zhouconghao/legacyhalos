@@ -209,6 +209,8 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
         if abs_apertures:
             if refellipsefit['sma_moment'] > 0:
                 results['sma_ap{:02d}'.format(iap+1)] = np.float32(ap)
+            else:
+                results['sma_ap{:02d}'.format(iap+1)] = np.float32(0.0)
         else:
             if refellipsefit['sma_moment'] > 0:
                 results['sma_ap{:02d}'.format(iap+1)] = np.float32(refellipsefit['sma_moment'] * ap) # [arcsec]
