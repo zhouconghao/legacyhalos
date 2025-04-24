@@ -320,8 +320,10 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
 
                     if '{}_var'.format(filt.lower()) in data.keys():
                         var = data['{}_var'.format(filt.lower())][igal] # [nanomaggies**2/arcsec**4]
-                        cogferr = pool.map(_apphot_one, [(var, mask, theta, x0, y0, aa, bb, pixscale, True, iscircle)
-                                                        for aa, bb in zip(smapixels, smbpixels)])
+                        # cogferr = pool.map(_apphot_one, [(var, mask, theta, x0, y0, aa, bb, pixscale, True, iscircle)
+                        #                                 for aa, bb in zip(smapixels, smbpixels)])
+                        cogferr = [_apphot_one((var, mask, theta, x0, y0, aa, bb, pixscale, True, iscircle)) for aa, bb in zip(smapixels, smbpixels)]
+
                         if len(cogferr) > 0:
                             cogferr = np.hstack(cogferr)
                         else:
@@ -384,8 +386,9 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore', category=AstropyUserWarning)
                 #cogflux = [apphot_one(img, mask, theta, x0, y0, aa, bb, pixscale, False, iscircle) for aa, bb in zip(sma, smb)]
-                cogflux = pool.map(_apphot_one, [(img, mask, theta, x0, y0, aa, bb, pixscale, False, iscircle)
-                                                for aa, bb in zip(sma, smb)])
+                # cogflux = pool.map(_apphot_one, [(img, mask, theta, x0, y0, aa, bb, pixscale, False, iscircle)
+                #                                 for aa, bb in zip(sma, smb)])
+                cogflux = [_apphot_one((img, mask, theta, x0, y0, aa, bb, pixscale, False, iscircle)) for aa, bb in zip(sma, smb)]
                 if len(cogflux) > 0:
                     cogflux = np.hstack(cogflux)
                 else:
@@ -393,8 +396,9 @@ def ellipse_cog(bands, data, refellipsefit, igal=0, pool=None,
 
                 if '{}_var'.format(filt.lower()) in data.keys():
                     var = data['{}_var'.format(filt.lower())][igal] # [nanomaggies**2/arcsec**4]
-                    cogferr = pool.map(_apphot_one, [(var, mask, theta, x0, y0, aa, bb, pixscale, True, iscircle)
-                                                    for aa, bb in zip(sma, smb)])
+                    # cogferr = pool.map(_apphot_one, [(var, mask, theta, x0, y0, aa, bb, pixscale, True, iscircle)
+                    #                                 for aa, bb in zip(sma, smb)])
+                    cogferr = [_apphot_one((var, mask, theta, x0, y0, aa, bb, pixscale, True, iscircle)) for aa, bb in zip(sma, smb)]
                     if len(cogferr) > 0:
                         cogferr = np.hstack(cogferr)
                     else:
