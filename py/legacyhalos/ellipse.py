@@ -567,7 +567,7 @@ class _Timeout(Exception):
 def _alarm_handler(signum, frame):
     raise _Timeout()
 
-def _integrate_with_retry(args, max_retries=5, timeout=600):
+def _integrate_with_retry(args, max_retries=5, timeout=180):
     img, sma, pa, eps, x0, y0, integrmode, sclip, nclip = args
     for attempt in range(1, max_retries+1):
         try:
