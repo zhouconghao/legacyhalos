@@ -82,7 +82,7 @@ def get_galaxy_galaxydir(cat, datadir=None, htmldir=None, html=False):
         return galaxy, galaxydir
 
 def missing_files(args, sample, size=1, clobber_overwrite=None):
-    from astrometry.util.multiproc import multiproc
+    # from astrometry.util.multiproc import multiproc
     from legacyhalos.io import _missing_files_one
 
     dependson = None
@@ -138,7 +138,7 @@ def missing_files(args, sample, size=1, clobber_overwrite=None):
         ngal = len(sample)
     indices = np.arange(ngal)
 
-    mp = multiproc(nthreads=args.nproc)
+    # mp = multiproc(nthreads=args.nproc)
     missargs = []
     for gal, gdir in zip(np.atleast_1d(galaxy), np.atleast_1d(galaxydir)):
         #missargs.append([gal, gdir, filesuffix, dependson, clobber])
@@ -148,7 +148,7 @@ def missing_files(args, sample, size=1, clobber_overwrite=None):
         else:
             missargs.append([checkfile, None, clobber])
         
-    todo = np.array(mp.map(_missing_files_one, missargs))
+    todo = np.array([_missing_files_one(arg) for arg in missargs])
 
     itodo = np.where(todo == 'todo')[0]
     idone = np.where(todo == 'done')[0]
@@ -1090,6 +1090,7 @@ def build_htmlpage_one(ii, gal, galaxy1, galaxydir1, htmlgalaxydir1, htmlhome, h
     """Build the web page for a single galaxy.
 
     """
+    print(f"Building {htmlgalaxydir1} for {galaxy1}")
     import fitsio
     from glob import glob
     import legacyhalos.io
@@ -1127,6 +1128,7 @@ def build_htmlpage_one(ii, gal, galaxy1, galaxydir1, htmlgalaxydir1, htmlhome, h
     shutil.copy2(
         html_log_file, os.path.join(htmlgalaxydir1, "{}-html.log".format(galaxy1))
     )
+    print(f"Done building {htmlfile} for {galaxy1}")
 
     # Support routines--
 
@@ -1169,7 +1171,6 @@ def build_htmlpage_one(ii, gal, galaxy1, galaxydir1, htmlgalaxydir1, htmlhome, h
                 tractor = tractor[srt]
                 sample = sample[srt]
                 assert(np.all(tractor['ref_id'] == sample[REFIDCOLUMN]))
-
         return nccds, tractor, sample
 
     def _html_galaxy_properties(html, gal):
@@ -1438,7 +1439,7 @@ def make_html(sample=None, datadir=None, htmldir=None, bands=('g', 'r', 'z'),
 
     """
     import subprocess
-    from astrometry.util.multiproc import multiproc
+    # from astrometry.util.multiproc import multiproc
 
     import legacyhalos.io
     from legacyhalos.coadds import _mosaic_width
