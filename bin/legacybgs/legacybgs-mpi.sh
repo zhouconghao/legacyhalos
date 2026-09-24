@@ -16,8 +16,9 @@
 stage=$1
 ncores=$2
 
-# source /global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos/bin/legacybgs/legacybgs-env
 export LEGACYHALOS_CODE_DIR="${LEGACYHALOS_CODE_DIR:-/global/cfs/projectdirs/m1727/cgibson/repos/legacyhalos}"
+source $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-env
+export PYTHONPATH=$LEGACYHALOS_CODE_DIR/py:$PYTHONPATH
 
 # export LEGACYHALOS_CODE_DIR="/global/cfs/projectdirs/desi/users/zhouc/desi_lsb/decals_lsb/forked_repos/legacyhalos"
 
