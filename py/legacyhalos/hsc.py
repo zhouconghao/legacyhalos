@@ -99,7 +99,10 @@ def missing_files(args, sample, size=1, clobber_overwrite=None):
             filesuffix = '-pipeline-coadds.isdone'
     elif args.ellipse:
         suffix = 'ellipse'
-        filesuffix = '-custom-ellipse.isdone'
+        if getattr(args, 'isophote', False):
+            filesuffix = '-custom-ellipse.isdone'
+        else:
+            filesuffix = '-custom-mask.isdone'
         dependson = '-custom-coadds.isdone'
     elif args.build_catalog:
         suffix = 'build-catalog'
@@ -198,7 +201,8 @@ def mpi_args():
     parser.add_argument('--pipeline-coadds', action='store_true', help='Build the pipelinecoadds.')
     parser.add_argument('--just-coadds', action='store_true', help='Just build the coadds and return (using --early-coadds in runbrick.py.')
 
-    parser.add_argument('--ellipse', action='store_true', help='Do the ellipse fitting.')
+    parser.add_argument('--ellipse', action='store_true', help='Build the source mask (and, with --isophote, do the ellipse fitting).')
+    parser.add_argument('--isophote', action='store_true', help='With --ellipse: also do the ellipse fitting (isophote and aperture photometry); by default --ellipse only writes out the source mask.')
     parser.add_argument('--integrate', action='store_true', help='Integrate the surface brightness profiles.')
     parser.add_argument('--htmlplots', action='store_true', help='Build the HTML output.')
     parser.add_argument('--htmlindex', action='store_true', help='Build HTML index.html page.')
@@ -839,11 +843,16 @@ def read_multiband(galaxy, galaxydir, galaxy_id, filesuffix='custom',
 
 def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                  filesuffix='custom', bands=['g', 'r', 'z'], refband='r',
-                 input_ellipse=None, 
+                 input_ellipse=None, mask_only=True,
                  sky_tests=False, unwise=False, verbose=False,
                  clobber=False, debug=False, logfile=None):
     """Wrapper on legacyhalos.mpi.call_ellipse but with specific preparatory work
     and hooks for the legacyhalos project.
+
+    mask_only - (default) only build and write out the multiband source mask
+      (see legacyhalos.io.write_mask) and the '-custom-mask.isdone' done-file;
+      do not do any isophote photometry. Set mask_only=False (--isophote on the
+      command line) to also do the ellipse-fitting.
 
     """
     import astropy.table
@@ -854,15 +863,31 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
         onegal = onegal[0] # create a Row object
     galaxy_id = onegal[GALAXYCOLUMN]
 
+    if mask_only and sky_tests:
+        skymsg = 'Sky tests are not applicable when only building the source mask; ignoring sky_tests.'
+        sky_tests = False
+    else:
+        skymsg = None
+
+    # Name the done-file after what this stage produces.
+    if mask_only:
+        stage = 'mask'
+    else:
+        stage = 'ellipse'
+
     if logfile:
         from contextlib import redirect_stdout, redirect_stderr
         with open(logfile, 'a') as log:
             with redirect_stdout(log), redirect_stderr(log):
+                if skymsg:
+                    print(skymsg)
                 data, galaxyinfo = read_multiband(galaxy, galaxydir, galaxy_id, bands=bands,
                                                   filesuffix=filesuffix, refband=refband,
                                                   pixscale=pixscale, redshift=onegal[ZCOLUMN],
                                                   sky_tests=sky_tests, verbose=verbose)
     else:
+        if skymsg:
+            print(skymsg)
         data, galaxyinfo = read_multiband(galaxy, galaxydir, galaxy_id, bands=bands,
                                           filesuffix=filesuffix, refband=refband,
                                           pixscale=pixscale, redshift=onegal[ZCOLUMN],
@@ -919,7 +944,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                             err = 1 # successful failure
                         else:
                             err = 0 # failed failure
-                    _done(galaxy, galaxydir, err, t0, 'ellipse', filesuffix, log=log)
+                    _done(galaxy, galaxydir, err, t0, stage, filesuffix, log=log)
         else:
             log = None
             if bool(data):
@@ -932,7 +957,7 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                     err = 1 # successful failure
                 else:
                     err = 0 # failed failure
-            _done(galaxy, galaxydir, err, t0, 'ellipse', filesuffix, log=log)
+            _done(galaxy, galaxydir, err, t0, stage, filesuffix, log=log)
     else:
         # assume logfile exists
         with open(logfile, 'a') as log:
@@ -948,15 +973,15 @@ def call_ellipse(onegal, galaxy, galaxydir, pixscale=0.262, nproc=1,
                                             apertures=APERTURES,
                                             abs_apertures=ABS_APERTURES,
                                             delta_logsma=delta_logsma, maxsma=maxsma,
-                                            input_ellipse=input_ellipse,
+                                            input_ellipse=input_ellipse, mask_only=mask_only,
                                             verbose=verbose, clobber=clobber, debug=debug, logfile=logfile)
                 else:
                     if os.path.isfile(os.path.join(galaxydir, '{}-{}-coadds.isdone'.format(galaxy, filesuffix))):
                         err = 1 # successful failure
                     else:
                         err = 0 # failed failure
-                    
-                _done(galaxy, galaxydir, err, t0, 'ellipse', filesuffix, log=log)
+
+                _done(galaxy, galaxydir, err, t0, stage, filesuffix, log=log)
 
 def _get_mags(
     cat,

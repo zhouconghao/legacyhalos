@@ -41,11 +41,20 @@ def call_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                  copy_mw_transmission=False, 
                  verbose=False, debug=False, write_donefile=True,
                  logfile=None, input_ellipse=None, sbthresh=None,
-                 apertures=None, abs_apertures=False, clobber=False):
+                 apertures=None, abs_apertures=False, mask_only=False, clobber=False):
     """Wrapper script to do ellipse-fitting.
+
+    mask_only - only write out the multiband source mask; do not do any
+      isophote photometry (see legacyhalos.ellipse.legacyhalos_ellipse). The
+      done-file is then named after the 'mask' (rather than 'ellipse') stage.
 
     """
     import legacyhalos.ellipse
+
+    if mask_only:
+        stage = 'mask'
+    else:
+        stage = 'ellipse'
 
     # Do not force zcolumn here; it's not always wanted or needed in ellipse.
     #if zcolumn is None:
@@ -60,10 +69,10 @@ def call_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
             pixscale=pixscale, nproc=nproc,
             sbthresh=sbthresh, apertures=apertures, input_ellipse=input_ellipse,
             delta_logsma=delta_logsma, maxsma=maxsma, logsma=logsma,
-            copy_mw_transmission=copy_mw_transmission,
+            copy_mw_transmission=copy_mw_transmission, mask_only=mask_only,
             verbose=verbose, debug=debug, clobber=clobber)
         if write_donefile:
-            _done(galaxy, galaxydir, err, t0, 'ellipse', data['filesuffix'])
+            _done(galaxy, galaxydir, err, t0, stage, data['filesuffix'])
     else:
         with open(logfile, 'a') as log:
             with redirect_stdout(log), redirect_stderr(log):
@@ -75,10 +84,10 @@ def call_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                     sbthresh=sbthresh, apertures=apertures, abs_apertures=abs_apertures,
                     input_ellipse=input_ellipse,
                     delta_logsma=delta_logsma, maxsma=maxsma, logsma=logsma,
-                    copy_mw_transmission=copy_mw_transmission,
+                    copy_mw_transmission=copy_mw_transmission, mask_only=mask_only,
                     verbose=verbose, clobber=clobber)
                 if write_donefile:
-                    _done(galaxy, galaxydir, err, t0, 'ellipse', data['filesuffix'], log=log)
+                    _done(galaxy, galaxydir, err, t0, stage, data['filesuffix'], log=log)
 
     return err
 

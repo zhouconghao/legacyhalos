@@ -223,6 +223,7 @@ def main():
                          input_ellipse=input_ellipse,
                          bands=['g', 'r', 'z'], refband='r',
                          pixscale=args.pixscale, nproc=args.nproc,
+                         mask_only=not args.isophote,
                          verbose=args.verbose, debug=args.debug,
                          sky_tests=args.sky_tests, unwise=False,
                          logfile=logfile, clobber=args.clobber)

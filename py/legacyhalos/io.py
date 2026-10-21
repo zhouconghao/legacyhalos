@@ -435,6 +435,195 @@ def read_ellipsefit(galaxy, galaxydir, filesuffix='', galaxy_id='', verbose=True
 
     return ellipsefit
 
+def get_mask_filename(galaxy, galaxydir, filesuffix='', galaxy_id=''):
+    """Return the name of the source-mask file written by write_mask (the naming
+    convention mirrors get_ellipsefit_filename).
+
+    """
+    if type(galaxy_id) is not str:
+        galaxy_id = str(galaxy_id)
+
+    if galaxy_id.strip() == '':
+        galid = ''
+    else:
+        galid = '-{}'.format(galaxy_id)
+
+    if filesuffix.strip() == '':
+        fsuff = ''
+    else:
+        fsuff = '-{}'.format(filesuffix)
+
+    maskfile = os.path.join(galaxydir, '{}{}{}-mask.fits.fz'.format(galaxy, fsuff, galid))
+
+    return maskfile
+
+# Header keywords (and keyword prefixes) copied from the coadd image headers
+# into the source-mask file so that each mask carries its own WCS.
+_MASK_WCS_KEYS = ('WCSAXES', 'CTYPE1', 'CTYPE2', 'CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
+                  'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2', 'CDELT1', 'CDELT2', 'CUNIT1', 'CUNIT2',
+                  'PC1_1', 'PC1_2', 'PC2_1', 'PC2_2', 'LONPOLE', 'LATPOLE',
+                  'EQUINOX', 'RADESYS', 'RADECSYS', 'MJD_MEAN', 'FILTER', 'MAGZERO')
+_MASK_WCS_PREFIXES = ('PV1_', 'PV2_')
+
+def _header_records(hdr):
+    """Iterate over the (name, value, comment) records of a fitsio.FITSHDR or an
+    astropy.io.fits.Header object.
+
+    """
+    if hdr is None:
+        return
+    if hasattr(hdr, 'records'): # fitsio.FITSHDR
+        for rec in hdr.records():
+            yield rec['name'], rec['value'], rec.get('comment', '')
+    elif hasattr(hdr, 'cards'): # astropy.io.fits.Header
+        for card in hdr.cards:
+            yield card.keyword, card.value, card.comment
+    else: # dictionary
+        for key in hdr.keys():
+            yield key, hdr[key], ''
+
+def _add_header_record(hdr, name, value, comment=''):
+    """Add a keyword to a fitsio.FITSHDR object, converting numpy scalars to
+    native Python types.
+
+    """
+    if isinstance(value, np.generic):
+        value = value.item()
+    hdr.add_record({'name': name, 'value': value, 'comment': comment})
+
+def write_mask(galaxy, galaxydir, data, igal=0, galaxy_id='', filesuffix='',
+               galaxyinfo=None, verbose=False):
+    """Write out the multiband source mask built by the project-specific
+    read_multiband method (e.g., legacyhalos.hsc.read_multiband and
+    legacyhalos.hsc._build_multiband_mask) for the galaxy of interest.
+
+    The output is a multi-extension, fpack-compressed FITS file (see
+    get_mask_filename) with one uint8 image extension per band (EXTNAME is the
+    upper-case band name) in which 1 = masked (pixels excluded from
+    ellipse-fitting: bright stars and the other maskbits, pixels with no
+    coverage, the image border, significant model residuals, and all the
+    satellite sources) and 0 = unmasked. The pixels of the galaxy of interest
+    are never masked. The moment-derived geometry of the galaxy is written to
+    the primary header and the WCS of each band is copied from the coadd image
+    headers.
+
+    data - dictionary returned by the project-specific read_multiband method
+    igal - index of the galaxy of interest (in data['galaxy_indx'])
+    galaxy_id - add a unique ID number to the output filename
+    galaxyinfo - optional dictionary of (value, comment) tuples to add to the
+      primary header (see, e.g., legacyhalos.hsc.read_multiband)
+
+    """
+    maskfile = get_mask_filename(galaxy, galaxydir, filesuffix=filesuffix, galaxy_id=galaxy_id)
+
+    bands, refband = data['bands'], data['refband']
+    refpixscale = float(data['refpixscale'])
+
+    # Primary header: code versions, galaxy identity, and geometry.
+    hdr0 = fitsio.FITSHDR()
+    for name, value, comment in _header_records(legacyhalos_header()):
+        _add_header_record(hdr0, name, value, comment)
+
+    _add_header_record(hdr0, 'GALAXY', str(galaxy), 'galaxy name')
+    _add_header_record(hdr0, 'GALAXYID', str(galaxy_id), 'galaxy ID')
+    _add_header_record(hdr0, 'FILESUFF', str(filesuffix), 'file suffix')
+    _add_header_record(hdr0, 'BANDS', ','.join(bands), 'bands (one image extension per band)')
+    _add_header_record(hdr0, 'REFBAND', refband, 'reference band')
+    _add_header_record(hdr0, 'PIXSCALE', refpixscale, 'reference-band pixel scale [arcsec/pixel]')
+    _add_header_record(hdr0, 'MASKVAL', 1, 'value of masked (excluded) pixels')
+
+    if 'mge' in data.keys():
+        mge = data['mge'][igal]
+        # Note that (x,y) are switched between MGE and photutils (see
+        # legacyhalos.ellipse.ellipsefit_multiband).
+        for key, name, comment in (
+                ('ra', 'RA', 'Tractor right ascension [deg]'),
+                ('dec', 'DEC', 'Tractor declination [deg]'),
+                ('bx', 'BX', 'Tractor x position [pixel]'),
+                ('by', 'BY', 'Tractor y position [pixel]'),
+                ('ra_moment', 'RA_MOM', 'moment-derived right ascension [deg]'),
+                ('dec_moment', 'DEC_MOM', 'moment-derived declination [deg]'),
+                ('ymed', 'X0_MOM', 'moment-derived x position [pixel]'),
+                ('xmed', 'Y0_MOM', 'moment-derived y position [pixel]'),
+                ('ypeak', 'XPEAK', 'x position of the peak [pixel]'),
+                ('xpeak', 'YPEAK', 'y position of the peak [pixel]'),
+                ('pa', 'PA_MOM', 'moment-derived position angle [deg]'),
+                ('eps', 'EPS_MOM', 'moment-derived ellipticity (1-b/a)'),
+                ('majoraxis', 'MAJAXIS', 'moment-derived semi-major axis [pixel]'),
+                ('largeshift', 'LRGSHIFT', 'large centroid shift; Tractor geometry used'),
+                ('small_tractor', 'SMALLTRC', 'Tractor half-light radius < 1 arcsec')):
+            if key in mge.keys():
+                _add_header_record(hdr0, name, mge[key], comment)
+        if 'majoraxis' in mge.keys():
+            _add_header_record(hdr0, 'SMA_MOM', float(mge['majoraxis']) * refpixscale,
+                               'moment-derived semi-major axis [arcsec]')
+        if 'eps' in mge.keys():
+            _add_header_record(hdr0, 'BA_MOM', 1.0 - float(mge['eps']),
+                               'moment-derived minor-to-major axis ratio')
+
+    if galaxyinfo:
+        for key in galaxyinfo.keys():
+            value, comment = galaxyinfo[key]
+            _add_header_record(hdr0, key.upper(), value, str(comment))
+
+    if verbose:
+        print('Writing {}'.format(maskfile))
+    tmpfile = maskfile + '.tmp'
+    with fitsio.FITS(tmpfile, 'rw', clobber=True) as ff:
+        ff.write(None, header=hdr0)
+        for filt in bands:
+            img = data['{}_masked'.format(filt.lower())][igal]
+            mask = ma.getmaskarray(img).astype(np.uint8) # 1 = masked
+
+            hdr = fitsio.FITSHDR()
+            # Copy the WCS from the coadd header, if available.
+            for name, value, comment in _header_records(data.get('{}_header'.format(filt.lower()))):
+                if name in _MASK_WCS_KEYS or name.startswith(_MASK_WCS_PREFIXES):
+                    _add_header_record(hdr, name, value, comment)
+            if 'filt2pixscale' in data.keys():
+                pixscale = float(data['filt2pixscale'][filt])
+            else:
+                pixscale = refpixscale
+            _add_header_record(hdr, 'GALAXY', str(galaxy), 'galaxy name')
+            _add_header_record(hdr, 'GALAXYID', str(galaxy_id), 'galaxy ID')
+            _add_header_record(hdr, 'BAND', filt, 'band')
+            _add_header_record(hdr, 'PIXSCALE', pixscale, 'pixel scale [arcsec/pixel]')
+            _add_header_record(hdr, 'MASKVAL', 1, 'value of masked (excluded) pixels')
+
+            ff.write(mask, extname=filt.upper(), header=hdr, compress='rice')
+
+    os.rename(tmpfile, maskfile)
+
+    return maskfile
+
+def read_mask(galaxy, galaxydir, filesuffix='', galaxy_id='', verbose=True, maskfile=None):
+    """Read the output of write_mask.
+
+    Returns a dictionary with one boolean array per band (True = masked) plus
+    the list of bands ('bands'), the primary header ('header'), and the header
+    of each image extension ('{band}_header').
+
+    """
+    if maskfile is None:
+        maskfile = get_mask_filename(galaxy, galaxydir, filesuffix=filesuffix, galaxy_id=galaxy_id)
+
+    if not os.path.isfile(maskfile):
+        if verbose:
+            print('File {} not found!'.format(maskfile))
+        return dict()
+
+    mask = dict()
+    with fitsio.FITS(maskfile) as ff:
+        hdr0 = ff[0].read_header()
+        bands = [band.strip() for band in hdr0['BANDS'].split(',')]
+        mask['bands'] = bands
+        mask['header'] = hdr0
+        for band in bands:
+            mask[band] = ff[band.upper()].read().astype(bool)
+            mask['{}_header'.format(band)] = ff[band.upper()].read_header()
+
+    return mask
+
 def write_sersic(galaxy, galaxydir, sersic, modeltype='single', verbose=False):
     """Pickle a dictionary of photutils.isophote.isophote.IsophoteList objects (see,
     e.g., ellipse.fit_multiband).

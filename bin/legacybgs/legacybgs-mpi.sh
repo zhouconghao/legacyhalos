@@ -2,7 +2,9 @@
 
 # Shell script for running the various stages of the legacyhalos code using
 # MPI+shifter at NERSC. Required arguments:
-#   {1} stage [coadds, pipeline-coadds, ellipse, htmlplots]
+#   {1} stage [coadds, pipeline-coadds, ellipse, isophote, htmlplots]
+#     ellipse  - build and write out the source masks only
+#     isophote - build the source masks and do the ellipse-fitting (isophote photometry)
 #   {2} ncores [should match the resources requested.]
 
 # Example: build the coadds using 16 MPI tasks with 8 cores per node (and therefore 16*8/32=4 nodes)
@@ -37,8 +39,11 @@ elif [ $stage = "coadds" ]; then
 elif [ $stage = "pipeline-coadds" ]; then
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --pipeline-coadds --nproc $ncores --mpi --verbose
 elif [ $stage = "ellipse" ]; then
-    echo "Running the ellipse stage"
+    echo "Running the ellipse stage (source masks only)"
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --ellipse --nproc $ncores --mpi --verbose
+elif [ $stage = "isophote" ]; then
+    echo "Running the ellipse stage with isophote photometry"
+    time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --ellipse --isophote --nproc $ncores --mpi --verbose
 elif [ $stage = "htmlplots" ]; then
     time python $LEGACYHALOS_CODE_DIR/bin/legacybgs/legacybgs-mpi --htmlplots --nproc $ncores --mpi --verbose --clobber
 elif [ $stage = "htmlindex" ]; then

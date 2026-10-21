@@ -1172,16 +1172,20 @@ def legacyhalos_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
                         abs_apertures=False,
                         delta_sma=1.0, delta_logsma=5, maxsma=None, logsma=True,
                         copy_mw_transmission=False, 
-                        input_ellipse=None, fitgeometry=False,
+                        input_ellipse=None, fitgeometry=False, mask_only=False,
                         verbose=False, debug=False, nowrite=False, clobber=False):
-                        
+
     """Top-level wrapper script to do ellipse-fitting on a single galaxy.
 
     fitgeometry - fit for the ellipse parameters (do not use the mean values
       from MGE).
 
+    mask_only - only write out the multiband source mask built by the
+      project-specific read_multiband method (see legacyhalos.io.write_mask);
+      do not do any ellipse-fitting or isophote (and aperture) photometry.
+
     """
-    from legacyhalos.io import get_ellipsefit_filename
+    from legacyhalos.io import get_ellipsefit_filename, get_mask_filename
     
     if bool(data):
         if data['missingdata']:
@@ -1199,6 +1203,23 @@ def legacyhalos_ellipse(galaxy, galaxydir, data, galaxyinfo=None,
             galaxy_id = ['']
             
         for igal, galid in enumerate(galaxy_id):
+            if mask_only:
+                # Write out the source mask and move on without doing any
+                # isophote photometry.
+                maskfile = get_mask_filename(galaxy, galaxydir, galaxy_id=str(galid),
+                                             filesuffix=data['filesuffix'])
+                if os.path.isfile(maskfile) and not clobber:
+                    print('Skipping existing source mask {}'.format(maskfile))
+                else:
+                    if galaxyinfo is None:
+                        outgalaxyinfo = None
+                    else:
+                        outgalaxyinfo = np.atleast_1d(galaxyinfo)[igal]
+                    legacyhalos.io.write_mask(galaxy, galaxydir, data, igal=igal,
+                                              galaxy_id=str(galid), galaxyinfo=outgalaxyinfo,
+                                              filesuffix=data['filesuffix'], verbose=True)
+                continue
+
             ellipsefitfile = get_ellipsefit_filename(galaxy, galaxydir, galaxy_id=str(galid),
                                                      filesuffix=data['filesuffix'])
             if os.path.isfile(ellipsefitfile) and not clobber:
